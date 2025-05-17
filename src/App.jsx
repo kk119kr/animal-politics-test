@@ -58,7 +58,10 @@ const AppContent = () => {
 
       {/* 푸터 - pointer-events-none 추가 */}
       <div className="fixed bottom-2 w-full text-center text-gray-400 text-xs pointer-events-none">
-        © 2025 어느 당도 아닌 동물입니다만? | 정치심리테스트 저작권 - 송혁규
+        © 2025 정치성향테스트 | 제작: 송혁규, 유혜인
+        <br />
+        문의: gurrb1@naver.com | 모든 콘텐츠 및 이미지의 권리는 제작자에게
+        있습니다.
       </div>
     </div>
   );
