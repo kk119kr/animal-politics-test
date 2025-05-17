@@ -91,7 +91,13 @@ export const TestProvider = ({ children }) => {
 
   // 다시 테스트하기 함수
   const restartTest = () => {
-    startTest();
+    // 메인 페이지로 이동하도록 변경
+    setPage("start");
+    // 기존 상태 초기화
+    setCurrentQuestionIndex(0);
+    setAnswers([]);
+    setResult(null);
+    setUserVectors(null);
   };
 
   // 현재 질문 가져오기
