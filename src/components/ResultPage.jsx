@@ -292,6 +292,42 @@ function ResultPage() {
     });
   };
 
+  // 카카오톡 공유 함수 추가
+  const shareToKakao = () => {
+    if (window.Kakao && window.Kakao.Link) {
+      window.Kakao.Link.sendDefault({
+        objectType: "feed",
+        content: {
+          title: `나의 정치성향 동물은 ${result.name}(${result.animal})입니다!`,
+          description: "어느 당도 아닌 동물입니다만? - 정치성향테스트",
+          imageUrl: `${window.location.origin}/images/${result.id}.png`,
+          link: {
+            mobileWebUrl: window.location.href,
+            webUrl: window.location.href,
+          },
+        },
+        buttons: [
+          {
+            title: "테스트 해보기",
+            link: {
+              mobileWebUrl: window.location.origin,
+              webUrl: window.location.origin,
+            },
+          },
+        ],
+      });
+    } else {
+      alert(
+        "카카오톡 SDK를 불러오는데 실패했습니다. 다른 방법으로 공유해주세요."
+      );
+    }
+  };
+
+  // 인스타그램 공유 함수 추가
+  const shareToInstagram = () => {
+    alert("화면을 캡처하여 인스타그램에 공유해보세요!");
+  };
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg max-w-3xl w-full forest-card animate-fade-in">
       <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
@@ -357,33 +393,19 @@ function ResultPage() {
             </div>
           </div>
 
-          {/* 공유 버튼 */}
+          {/* 여기 공유 버튼 영역을 수정 */}
           <div className="mt-4 flex space-x-2 justify-center">
             <button
               className="py-2 px-4 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm forest-button"
-              onClick={() =>
-                window.open(
-                  "https://developers.kakao.com/docs/latest/ko/message/js-link#custom-template-msg",
-                  "_blank"
-                )
-              }
+              onClick={shareToKakao}
             >
               카카오톡 공유
             </button>
             <button
-              className="py-2 px-4 bg-blue-400 hover:bg-blue-500 text-white rounded-lg text-sm forest-button"
-              onClick={() =>
-                window.open(
-                  "https://twitter.com/intent/tweet?text=" +
-                    encodeURIComponent(
-                      `나의 정치성향 동물은 ${result.name}(${result.animal})입니다! - 어느 당도 아닌 동물입니다만? 테스트 해보세요: ` +
-                        window.location.href
-                    ),
-                  "_blank"
-                )
-              }
+              className="py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm forest-button"
+              onClick={shareToInstagram}
             >
-              트위터 공유
+              인스타그램 공유
             </button>
             <button
               className="py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm forest-button"
