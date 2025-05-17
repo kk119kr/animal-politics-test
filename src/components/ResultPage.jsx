@@ -1,14 +1,11 @@
 // src/components/ResultPage.jsx
 import { useTest } from "../contexts/TestContext";
 import { useState, useEffect } from "react";
-import results from "../data/results"; // 모든 결과 데이터 임포트
+import results from "../data/results";
 
-// 벡터 값을 표시하는 온도계 컴포넌트
+// 벡터 온도계 컴포넌트
 const VectorThermometer = ({ label, value, description }) => {
-  // 값의 범위를 퍼센트로 변환 (-100 ~ 100 -> 0 ~ 100%)
   const percent = (value + 100) / 2;
-
-  // 값에 따른 색상 지정
   let color = "bg-gray-400";
   if (value > 50) color = "bg-red-500";
   else if (value > 0) color = "bg-orange-400";
@@ -18,7 +15,6 @@ const VectorThermometer = ({ label, value, description }) => {
   const [width, setWidth] = useState(0);
 
   useEffect(() => {
-    // 애니메이션 효과를 위해 지연 후 너비 설정
     setTimeout(() => {
       setWidth(percent);
     }, 200);
@@ -41,7 +37,7 @@ const VectorThermometer = ({ label, value, description }) => {
   );
 };
 
-// 탭 컴포넌트 - 인터랙티브하게 개선
+// 탭 컴포넌트
 const ResultTabs = ({ activeTab, setActiveTab, tabs }) => {
   return (
     <div className="flex border-b border-gray-200 mb-4">
@@ -60,7 +56,6 @@ const ResultTabs = ({ activeTab, setActiveTab, tabs }) => {
           {activeTab !== tab.id && (
             <span className="absolute inset-0 bg-gray-100 opacity-0 hover:opacity-10 transition-opacity duration-200"></span>
           )}
-          {/* 클릭 가능함을 나타내는 작은 표시 */}
           <span className="absolute top-0 right-0 w-1.5 h-1.5 bg-blue-500 rounded-full opacity-70"></span>
         </button>
       ))}
@@ -70,25 +65,22 @@ const ResultTabs = ({ activeTab, setActiveTab, tabs }) => {
 
 // 궁합 표시 섹션 컴포넌트
 const CompatibilitySection = ({ currentResult, allResults }) => {
-  // 궁합이 좋은 유형 (예시 - 실제 데이터에 맞게 조정 필요)
   const getCompatibleTypes = (currentId) => {
     const compatibilityMap = {
-      R1: ["R7", "R3"], // 원칙 수호자: 균형 조율자, 전통 수호자
-      R2: ["R8", "R10"], // 시장 신봉자: 지식 탐구자, 유연한 혁신가
-      R3: ["R1", "R9"], // 전통 수호자: 원칙 수호자, 공동체 건설자
-      R4: ["R5", "R6"], // 열정 혁신가: 정의 수호자, 자유 추구자
-      R5: ["R4", "R9"], // 정의 수호자: 열정 혁신가, 공동체 건설자
-      R6: ["R4", "R10"], // 자유 추구자: 열정 혁신가, 유연한 혁신가
-      R7: ["R1", "R8"], // 균형 조율자: 원칙 수호자, 지식 탐구자
-      R8: ["R2", "R7"], // 지식 탐구자: 시장 신봉자, 균형 조율자
-      R9: ["R3", "R5"], // 공동체 건설자: 전통 수호자, 정의 수호자
-      R10: ["R2", "R6"], // 유연한 혁신가: 시장 신봉자, 자유 추구자
+      R1: ["R7", "R3"],
+      R2: ["R8", "R10"],
+      R3: ["R1", "R9"],
+      R4: ["R5", "R6"],
+      R5: ["R4", "R9"],
+      R6: ["R4", "R10"],
+      R7: ["R1", "R8"],
+      R8: ["R2", "R7"],
+      R9: ["R3", "R5"],
+      R10: ["R2", "R6"],
     };
-
     return compatibilityMap[currentId] || [];
   };
 
-  // 현재 결과와 궁합이 좋은 ID들 가져오기
   const compatibleIds = getCompatibleTypes(currentResult.id);
   const compatibleResults = compatibleIds
     .map((id) => allResults.find((result) => result.id === id))
@@ -97,7 +89,6 @@ const CompatibilitySection = ({ currentResult, allResults }) => {
   return (
     <div className="mt-8 bg-gray-50 rounded-lg p-4">
       <h3 className="font-bold text-lg mb-3 text-center">잘 어울리는 성향</h3>
-
       <div className="flex justify-center space-x-4">
         {compatibleResults.map((result) => (
           <div key={result.id} className="text-center">
@@ -130,7 +121,6 @@ const CompatibilitySection = ({ currentResult, allResults }) => {
 const ResultGallery = ({ allResults, currentResult }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // 희귀도별로 결과 분류
   const resultsByRarity = {
     UR: allResults.filter((r) => r.rarity === "UR"),
     SR: allResults.filter((r) => r.rarity === "SR"),
@@ -239,10 +229,39 @@ const ResultGallery = ({ allResults, currentResult }) => {
   );
 };
 
-const ResultPage = () => {
+// 주요 컴포넌트
+function ResultPage() {
   const { result, userVectors, restartTest } = useTest();
   const [activeTab, setActiveTab] = useState("traits");
   const [copied, setCopied] = useState(false);
+
+  // 카드 애니메이션 스타일
+  const cardAnimationStyle = `
+    @keyframes cardFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    .result-card-animate {
+      animation: cardFloat 3s ease-in-out infinite;
+    }
+  `;
+
+  // 스타일 태그 추가
+  useEffect(() => {
+    if (!document.getElementById("card-animation-style")) {
+      const styleEl = document.createElement("style");
+      styleEl.id = "card-animation-style";
+      styleEl.textContent = cardAnimationStyle;
+      document.head.appendChild(styleEl);
+
+      return () => {
+        const existingStyle = document.getElementById("card-animation-style");
+        if (existingStyle) {
+          existingStyle.remove();
+        }
+      };
+    }
+  }, []);
 
   // 탭 정의
   const tabs = [
@@ -283,7 +302,6 @@ const ResultPage = () => {
         {/* 결과 카드 이미지 섹션 */}
         <div className="md:w-2/5">
           <div className="relative animate-scale-in result-card-animate">
-            {/* 실제 카드 이미지 표시 - 애니메이션 추가 */}
             <img
               src={`/images/${result.id}.png`}
               alt={`${result.name} (${result.animal})`}
@@ -291,11 +309,10 @@ const ResultPage = () => {
               onError={(e) => {
                 console.error(`이미지 로드 실패: ${result.id}.png`);
                 e.target.onerror = null;
-                e.target.src = "/images/card-placeholder.png"; // 에러 시 대체 이미지
+                e.target.src = "/images/card-placeholder.png";
               }}
             />
 
-            {/* 희귀도 뱃지 */}
             <div
               className={`absolute top-2 right-2 py-1 px-3 rounded-full text-white text-xs font-bold
               ${
@@ -412,7 +429,7 @@ const ResultPage = () => {
             </div>
           )}
 
-          {/* 탭 메뉴 - 인터랙티브하게 개선됨 */}
+          {/* 탭 메뉴 */}
           <div className="mt-4 bg-gray-50 rounded-lg p-2">
             <ResultTabs
               activeTab={activeTab}
@@ -420,7 +437,6 @@ const ResultPage = () => {
               tabs={tabs}
             />
 
-            {/* 탭 내용 */}
             <div className="bg-white rounded-lg p-4 shadow-sm animate-fade-in">
               {activeTab === "traits" && (
                 <div>
@@ -481,37 +497,6 @@ const ResultPage = () => {
       <ResultGallery allResults={results} currentResult={result} />
     </div>
   );
-};
-
-// 카드 애니메이션 스타일 추가
-const cardAnimationStyle = `
-  @keyframes cardFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-  }
-
-  .result-card-animate {
-    animation: cardFloat 3s ease-in-out infinite;
-  }
-`;
-
-// 스타일 태그 추가
-useEffect(() => {
-  // 이미 존재하는지 확인
-  if (!document.getElementById("card-animation-style")) {
-    const styleEl = document.createElement("style");
-    styleEl.id = "card-animation-style";
-    styleEl.textContent = cardAnimationStyle;
-    document.head.appendChild(styleEl);
-
-    // 컴포넌트 언마운트 시 제거
-    return () => {
-      const existingStyle = document.getElementById("card-animation-style");
-      if (existingStyle) {
-        existingStyle.remove();
-      }
-    };
-  }
-}, []);
+}
 
 export default ResultPage;

@@ -15,7 +15,17 @@ function StartPage() {
         />
       </div>
 
-      {/* 하단 설명 영역 */}
+      {/* 시작 버튼 - 일러스트 바로 아래로 위치 변경 */}
+      <div className="w-full flex justify-center mt-4 mb-4">
+        <button
+          onClick={startTest}
+          className="w-[250px] py-4 text-white bg-green-700 rounded-full text-lg font-bold shadow-lg transition-all duration-300 hover:bg-green-800 hover:shadow-xl hover:-translate-y-1"
+        >
+          테스트 시작하기
+        </button>
+      </div>
+
+      {/* 하단 설명 영역 - 버튼 아래로 이동 */}
       <div className="w-[90%] text-center my-4">
         <h2 className="text-2xl font-bold mb-3 text-green-900">
           정치성향테스트
@@ -31,16 +41,6 @@ function StartPage() {
             않습니다.
           </span>
         </p>
-      </div>
-
-      {/* 시작 버튼 */}
-      <div className="mt-6 mb-[9vh] w-full flex justify-center">
-        <button
-          onClick={startTest}
-          className="w-[250px] py-4 text-white bg-green-700 rounded-full text-lg font-bold shadow-lg transition-all duration-300 hover:bg-green-800 hover:shadow-xl hover:-translate-y-1"
-        >
-          테스트 시작하기
-        </button>
       </div>
     </div>
   );
