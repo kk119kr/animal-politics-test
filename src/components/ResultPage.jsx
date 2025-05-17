@@ -1,6 +1,6 @@
 // src/components/ResultPage.jsx
 import { useTest } from "../contexts/TestContext";
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import results from "../data/results";
 
 // 벡터 온도계 컴포넌트
@@ -234,6 +234,9 @@ function ResultPage() {
   const { result, userVectors, restartTest } = useTest();
   const [activeTab, setActiveTab] = useState("traits");
   const [copied, setCopied] = useState(false);
+  const resultCardRef = useRef(null);
+  const fullResultRef = useRef(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   // 카드 애니메이션 스타일
   const cardAnimationStyle = `
@@ -334,30 +337,65 @@ function ResultPage() {
     }
   };
 
-  // 인스타그램 공유 함수 추가
-  const shareToInstagram = () => {
-    // 모바일 환경인지 확인
-    const isMobile =
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      );
+  // 인스타그램 공유 대신 이미지 저장 함수로 변경
+  const saveResultImage = async (type) => {
+    if (!result) return;
 
-    if (isMobile) {
-      // 인스타그램 앱으로 이동 시도 (스토리 공유)
-      window.location.href = "instagram://story-camera";
+    // 저장 진행 중 표시
+    setIsSaving(true);
 
-      // 약간의 지연 후 메시지 표시 (앱이 열리지 않았을 경우)
-      setTimeout(() => {
-        alert("인스타그램 앱을 열 수 없는 경우, 화면을 캡처하여 공유해보세요!");
-      }, 2000);
-    } else {
-      // 데스크톱에서는 안내 메시지만 표시
-      alert("화면을 캡처하여 인스타그램에 공유해보세요!");
+    try {
+      // html2canvas 동적 import
+      const html2canvasModule = await import("html2canvas");
+      const html2canvas = html2canvasModule.default;
+
+      // 사용자가 선택한 요소 (카드만 또는 전체 결과)
+      const targetElement =
+        type === "card" ? resultCardRef.current : fullResultRef.current;
+
+      if (!targetElement) {
+        throw new Error("대상 요소를 찾을 수 없습니다.");
+      }
+
+      // 캡처 설정 - 고품질 이미지를 위한 설정
+      const options = {
+        backgroundColor: type === "card" ? null : "#ffffff",
+        scale: 2, // 고해상도
+        useCORS: true, // 외부 이미지 로드 허용
+        allowTaint: true,
+        logging: false,
+      };
+
+      // 결과 요소를 캡처
+      const canvas = await html2canvas(targetElement, options);
+
+      // 이미지로 변환
+      const imgData = canvas.toDataURL("image/png");
+
+      // 이미지 다운로드 링크 생성
+      const link = document.createElement("a");
+      link.href = imgData;
+      link.download = `정치성향테스트_${result.name}_${
+        type === "card" ? "카드" : "전체결과"
+      }.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      alert("이미지가 저장되었습니다!");
+    } catch (error) {
+      console.error("이미지 생성 오류:", error);
+      alert("이미지 생성에 실패했습니다. 화면을 직접 캡처하여 저장해주세요.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg max-w-3xl w-full forest-card animate-fade-in">
+    <div
+      className="bg-white p-6 rounded-xl shadow-lg max-w-3xl w-full forest-card animate-fade-in"
+      ref={fullResultRef}
+    >
       <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
         테스트 결과
       </h1>
@@ -365,7 +403,10 @@ function ResultPage() {
       <div className="md:flex gap-6">
         {/* 결과 카드 이미지 섹션 */}
         <div className="md:w-2/5">
-          <div className="relative animate-scale-in result-card-animate">
+          <div
+            className="relative animate-scale-in result-card-animate"
+            ref={resultCardRef}
+          >
             <img
               src={`/images/${result.id}.png`}
               alt={`${result.name} (${result.animal})`}
@@ -376,6 +417,7 @@ function ResultPage() {
                 e.target.src = "/images/card-placeholder.png";
               }}
             />
+            {/* 희귀도 배지 코드 제거 */}
           </div>
 
           {/* 공유 미리보기 영역 */}
@@ -405,18 +447,62 @@ function ResultPage() {
             <button
               className="py-2 px-4 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm forest-button"
               onClick={shareToKakao}
+              disabled={isSaving}
             >
               카카오톡 공유
             </button>
-            <button
-              className="py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm forest-button"
-              onClick={shareToInstagram}
-            >
-              인스타그램 공유
-            </button>
+
+            {/* 드롭다운 메뉴로 변경한 이미지 저장 버튼 */}
+            <div className="relative inline-block">
+              <button
+                className="py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm forest-button flex items-center"
+                onClick={() =>
+                  document
+                    .getElementById("saveOptions")
+                    .classList.toggle("hidden")
+                }
+                disabled={isSaving}
+              >
+                {isSaving ? "저장 중..." : "이미지 저장"}
+                <svg
+                  className="w-4 h-4 ml-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+              <div
+                id="saveOptions"
+                className="hidden absolute z-10 mt-1 bg-white rounded-md shadow-lg w-full"
+              >
+                <div className="py-1">
+                  <button
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => saveResultImage("card")}
+                  >
+                    카드만 저장
+                  </button>
+                  <button
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => saveResultImage("full")}
+                  >
+                    전체 결과 저장
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <button
               className="py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm forest-button"
               onClick={copyToClipboard}
+              disabled={isSaving}
             >
               {copied ? "✓ 복사됨" : "URL 복사"}
             </button>
