@@ -286,7 +286,8 @@ function ResultPage() {
 
   // URL 복사 함수
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(window.location.href).then(() => {
+    const shareUrl = `${window.location.origin}?result=${result.id}`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
@@ -295,6 +296,9 @@ function ResultPage() {
   // 카카오톡 공유 함수 추가
   const shareToKakao = () => {
     if (window.Kakao && window.Kakao.Link) {
+      // 결과 ID를 URL에 추가한 공유 링크 생성
+      const shareUrl = `${window.location.origin}?result=${result.id}`;
+
       window.Kakao.Link.sendDefault({
         objectType: "feed",
         content: {
@@ -302,11 +306,18 @@ function ResultPage() {
           description: "어느 당도 아닌 동물입니다만? - 정치성향테스트",
           imageUrl: `${window.location.origin}/images/${result.id}.png`,
           link: {
-            mobileWebUrl: window.location.href,
-            webUrl: window.location.href,
+            mobileWebUrl: shareUrl,
+            webUrl: shareUrl,
           },
         },
         buttons: [
+          {
+            title: "결과 확인하기",
+            link: {
+              mobileWebUrl: shareUrl,
+              webUrl: shareUrl,
+            },
+          },
           {
             title: "테스트 해보기",
             link: {
