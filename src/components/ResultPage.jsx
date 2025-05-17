@@ -365,7 +365,7 @@ function ResultPage() {
     }
   };
 
-  // 이미지 저장 함수
+  // 개선된 이미지 저장 함수
   const saveResultImage = async (type) => {
     if (!result) return;
 
@@ -377,6 +377,17 @@ function ResultPage() {
       const html2canvasModule = await import("html2canvas");
       const html2canvas = html2canvasModule.default;
 
+      // 저장 전 UI 요소 상태 저장
+      const saveOptions = document.getElementById("saveOptions");
+      const saveOptionsDisplayStyle = saveOptions
+        ? saveOptions.style.display
+        : "none";
+
+      // 저장 옵션 드롭다운 숨기기
+      if (saveOptions) {
+        saveOptions.style.display = "none";
+      }
+
       // 사용자가 선택한 요소 (카드만 또는 전체 결과)
       const targetElement =
         type === "card" ? resultCardRef.current : fullResultRef.current;
@@ -385,20 +396,24 @@ function ResultPage() {
         throw new Error("대상 요소를 찾을 수 없습니다.");
       }
 
-      // 캡처 설정 - 고품질 이미지를 위한 설정
+      // 캡처 설정 - 고품질 이미지를 위한 설정 개선
       const options = {
         backgroundColor: type === "card" ? null : "#ffffff",
-        scale: 2, // 고해상도
+        scale: 3, // 더 높은 해상도 (2 → 3)
         useCORS: true, // 외부 이미지 로드 허용
         allowTaint: true,
         logging: false,
+        removeContainer: false, // 임시 컨테이너 제거
+        imageTimeout: 15000, // 이미지 로드 타임아웃 증가
+        width: targetElement.offsetWidth,
+        height: targetElement.offsetHeight,
       };
 
       // 결과 요소를 캡처
       const canvas = await html2canvas(targetElement, options);
 
-      // 이미지로 변환
-      const imgData = canvas.toDataURL("image/png");
+      // 이미지로 변환 (품질 개선)
+      const imgData = canvas.toDataURL("image/png", 1.0); // 최대 품질(1.0) 설정
 
       // 이미지 다운로드 링크 생성
       const link = document.createElement("a");
@@ -410,11 +425,67 @@ function ResultPage() {
       link.click();
       document.body.removeChild(link);
 
+      // UI 원상복구
+      if (saveOptions) {
+        saveOptions.style.display = saveOptionsDisplayStyle;
+      }
+
       alert("이미지가 저장되었습니다!");
     } catch (error) {
       console.error("이미지 생성 오류:", error);
       alert("이미지 생성에 실패했습니다. 화면을 직접 캡처하여 저장해주세요.");
     } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // 카드만 전용으로 저장하는 함수 (캡처가 아닌 이미지 직접 다운로드)
+  const saveCardImageDirectly = () => {
+    if (!result) return;
+    setIsSaving(true);
+
+    try {
+      // 카드 이미지 URL 가져오기
+      const cardUrl = `/images/${result.id}.png`;
+
+      // 이미지 로드
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = function () {
+        // 캔버스 생성
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        // 이미지 그리기
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+
+        // 캔버스를 이미지로 변환
+        const dataURL = canvas.toDataURL("image/png", 1.0);
+
+        // 이미지 다운로드
+        const link = document.createElement("a");
+        link.href = dataURL;
+        link.download = `정치성향테스트_${result.name}_카드.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        setIsSaving(false);
+        alert("카드 이미지가 저장되었습니다!");
+      };
+
+      img.onerror = function () {
+        console.error("이미지 로드 실패:", cardUrl);
+        alert("카드 이미지를 저장할 수 없습니다. 화면을 직접 캡처해 주세요.");
+        setIsSaving(false);
+      };
+
+      img.src = cardUrl;
+    } catch (error) {
+      console.error("이미지 저장 오류:", error);
+      alert("이미지 저장에 실패했습니다.");
       setIsSaving(false);
     }
   };
@@ -484,11 +555,13 @@ function ResultPage() {
               <button
                 id="saveButton"
                 className="py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm forest-button flex items-center"
-                onClick={() =>
-                  document
-                    .getElementById("saveOptions")
-                    .classList.toggle("hidden")
-                }
+                onClick={(e) => {
+                  e.stopPropagation(); // 이벤트 전파 방지
+                  const saveOptions = document.getElementById("saveOptions");
+                  if (saveOptions) {
+                    saveOptions.classList.toggle("hidden");
+                  }
+                }}
                 disabled={isSaving}
               >
                 {isSaving ? "저장 중..." : "이미지 저장"}
@@ -513,13 +586,13 @@ function ResultPage() {
                 <div className="py-1">
                   <button
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => saveResultImage("card")}
+                    onClick={() => saveCardImageDirectly()} // 카드만 직접 저장 함수 사용
                   >
                     카드만 저장
                   </button>
                   <button
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => saveResultImage("full")}
+                    onClick={() => saveResultImage("full")} // 전체 결과는 기존 함수 사용
                   >
                     전체 결과 저장
                   </button>
