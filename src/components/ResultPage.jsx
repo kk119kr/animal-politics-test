@@ -336,7 +336,24 @@ function ResultPage() {
 
   // 인스타그램 공유 함수 추가
   const shareToInstagram = () => {
-    alert("화면을 캡처하여 인스타그램에 공유해보세요!");
+    // 모바일 환경인지 확인
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+
+    if (isMobile) {
+      // 인스타그램 앱으로 이동 시도 (스토리 공유)
+      window.location.href = "instagram://story-camera";
+
+      // 약간의 지연 후 메시지 표시 (앱이 열리지 않았을 경우)
+      setTimeout(() => {
+        alert("인스타그램 앱을 열 수 없는 경우, 화면을 캡처하여 공유해보세요!");
+      }, 2000);
+    } else {
+      // 데스크톱에서는 안내 메시지만 표시
+      alert("화면을 캡처하여 인스타그램에 공유해보세요!");
+    }
   };
 
   return (
