@@ -376,27 +376,6 @@ function ResultPage() {
                 e.target.src = "/images/card-placeholder.png";
               }}
             />
-
-            <div
-              className={`absolute top-2 right-2 py-1 px-3 rounded-full text-white text-xs font-bold
-              ${
-                result.rarity === "C"
-                  ? "bg-gray-400"
-                  : result.rarity === "R"
-                  ? "bg-blue-500"
-                  : result.rarity === "SR"
-                  ? "bg-purple-500"
-                  : "bg-yellow-500"
-              }`}
-            >
-              {result.rarity === "C"
-                ? "일반"
-                : result.rarity === "R"
-                ? "희귀"
-                : result.rarity === "SR"
-                ? "초희귀"
-                : "전설"}
-            </div>
           </div>
 
           {/* 공유 미리보기 영역 */}
