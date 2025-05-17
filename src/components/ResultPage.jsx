@@ -14,49 +14,14 @@ const VectorThermometer = ({ label, value, description }) => {
 
   const [width, setWidth] = useState(0);
 
+  // 애니메이션 효과를 위한 useEffect
   useEffect(() => {
-    function handleClickOutside(event) {
-      const dropdown = document.getElementById("saveOptions");
-      if (
-        dropdown &&
-        !dropdown.contains(event.target) &&
-        event.target.id !== "saveButton"
-      ) {
-        dropdown.classList.add("hidden");
-      }
-    }
-    // 이벤트 리스너 추가
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      // 컴포넌트 언마운트 시 이벤트 리스너 제거
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  // 버튼에 id 추가
-  <button
-    id="saveButton"
-    className="py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm forest-button flex items-center"
-    onClick={() =>
-      document.getElementById("saveOptions").classList.toggle("hidden")
-    }
-    disabled={isSaving}
-  >
-    {isSaving ? "저장 중..." : "이미지 저장"}
-    <svg
-      className="w-4 h-4 ml-1"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        d="M19 9l-7 7-7-7"
-      />
-    </svg>
-  </button>;
+    // 약간의 지연 후 너비 설정
+    const timer = setTimeout(() => {
+      setWidth(percent);
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [percent]);
 
   return (
     <div className="mb-4">
@@ -94,7 +59,6 @@ const ResultTabs = ({ activeTab, setActiveTab, tabs }) => {
           {activeTab !== tab.id && (
             <span className="absolute inset-0 bg-gray-100 opacity-0 hover:opacity-10 transition-opacity duration-200"></span>
           )}
-          <span className="absolute top-0 right-0 w-1.5 h-1.5 bg-blue-500 rounded-full opacity-70"></span>
         </button>
       ))}
     </div>
@@ -274,7 +238,7 @@ function ResultPage() {
   const [copied, setCopied] = useState(false);
   const resultCardRef = useRef(null);
   const fullResultRef = useRef(null);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving, setIsSaving] = useState(false); // isSaving 상태 추가
 
   // 카드 애니메이션 스타일
   const cardAnimationStyle = `
@@ -302,6 +266,27 @@ function ResultPage() {
         }
       };
     }
+  }, []);
+
+  // 외부 클릭 처리를 위한 이벤트 리스너
+  useEffect(() => {
+    function handleClickOutside(event) {
+      const dropdown = document.getElementById("saveOptions");
+      if (
+        dropdown &&
+        !dropdown.contains(event.target) &&
+        event.target.id !== "saveButton"
+      ) {
+        dropdown.classList.add("hidden");
+      }
+    }
+
+    // 이벤트 리스너 추가
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // 컴포넌트 언마운트 시 이벤트 리스너 제거
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   // 탭 정의
@@ -336,38 +321,43 @@ function ResultPage() {
 
   // 카카오톡 공유 함수 추가
   const shareToKakao = () => {
-    if (window.Kakao && window.Kakao.Link) {
-      // 결과 ID를 URL에 추가한 공유 링크 생성
-      const shareUrl = `${window.location.origin}?result=${result.id}`;
+    if (window.Kakao && window.Kakao.Share) {
+      try {
+        // 결과 ID를 URL에 추가한 공유 링크 생성
+        const shareUrl = `${window.location.origin}?result=${result.id}`;
 
-      window.Kakao.Link.sendDefault({
-        objectType: "feed",
-        content: {
-          title: `나의 정치성향 동물은 ${result.name}(${result.animal})입니다!`,
-          description: "어느 당도 아닌 동물입니다만? - 정치성향테스트",
-          imageUrl: `${window.location.origin}/images/${result.id}.png`,
-          link: {
-            mobileWebUrl: shareUrl,
-            webUrl: shareUrl,
-          },
-        },
-        buttons: [
-          {
-            title: "결과 확인하기",
+        window.Kakao.Share.sendDefault({
+          objectType: "feed",
+          content: {
+            title: `나의 정치성향 동물은 ${result.name}(${result.animal})입니다!`,
+            description: "어느 당도 아닌 동물입니다만? - 정치성향테스트",
+            imageUrl: `${window.location.origin}/images/${result.id}.png`,
             link: {
               mobileWebUrl: shareUrl,
               webUrl: shareUrl,
             },
           },
-          {
-            title: "테스트 해보기",
-            link: {
-              mobileWebUrl: window.location.origin,
-              webUrl: window.location.origin,
+          buttons: [
+            {
+              title: "결과 확인하기",
+              link: {
+                mobileWebUrl: shareUrl,
+                webUrl: shareUrl,
+              },
             },
-          },
-        ],
-      });
+            {
+              title: "테스트 해보기",
+              link: {
+                mobileWebUrl: window.location.origin,
+                webUrl: window.location.origin,
+              },
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("카카오 공유 오류:", error);
+        alert("카카오 공유에 문제가 발생했습니다. 다른 방법으로 공유해주세요.");
+      }
     } else {
       alert(
         "카카오톡 SDK를 불러오는데 실패했습니다. 다른 방법으로 공유해주세요."
@@ -375,7 +365,7 @@ function ResultPage() {
     }
   };
 
-  // 인스타그램 공유 대신 이미지 저장 함수로 변경
+  // 이미지 저장 함수
   const saveResultImage = async (type) => {
     if (!result) return;
 
@@ -455,7 +445,6 @@ function ResultPage() {
                 e.target.src = "/images/card-placeholder.png";
               }}
             />
-            {/* 희귀도 배지 코드 제거 */}
           </div>
 
           {/* 공유 미리보기 영역 */}
@@ -480,7 +469,7 @@ function ResultPage() {
             </div>
           </div>
 
-          {/* 여기 공유 버튼 영역을 수정 */}
+          {/* 공유 버튼 영역 */}
           <div className="mt-4 flex space-x-2 justify-center">
             <button
               className="py-2 px-4 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm forest-button"
@@ -493,6 +482,7 @@ function ResultPage() {
             {/* 드롭다운 메뉴로 변경한 이미지 저장 버튼 */}
             <div className="relative inline-block">
               <button
+                id="saveButton"
                 className="py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm forest-button flex items-center"
                 onClick={() =>
                   document
