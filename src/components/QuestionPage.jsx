@@ -16,12 +16,6 @@ const QuestionPage = () => {
 
   const question = getCurrentQuestion();
 
-  // 디버깅을 위한 로그 추가
-  useEffect(() => {
-    console.log("현재 문항:", question);
-    console.log("이미지 파일:", question.imageFile);
-  }, [question]);
-
   // 진행률 계산 (%)
   const progressPercent = ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
@@ -70,51 +64,45 @@ const QuestionPage = () => {
           {question.question}
         </h2>
 
-        {/* 이미지 영역 - 이미지 로드 디버깅 정보 추가 */}
+        {/* 이미지 영역 - 테두리와 테스트 글씨 제거 */}
         <div className="mb-6 flex justify-center">
-          <div className="border rounded-lg p-2 w-full">
-            <p className="text-xs text-gray-500 mb-2">이미지 로드 테스트:</p>
-            <img
-              src={`/images/${question.imageFile}`}
-              alt={`질문 ${currentQuestionIndex + 1} 이미지`}
-              className="rounded-lg w-full object-contain"
-              style={{ maxWidth: "800px", maxHeight: "300px" }}
-              onLoad={() =>
-                console.log("이미지 로드 성공:", question.imageFile)
-              }
-              onError={(e) => {
-                console.error("이미지 로드 실패:", question.imageFile);
-                console.error("오류:", e);
-                setImageError(true);
-              }}
-            />
-            {imageError && (
-              <p className="text-xs text-red-500 mt-2">
-                이미지를 불러올 수 없습니다. 파일 경로를 확인해주세요.
-              </p>
-            )}
-          </div>
+          <img
+            src={`/images/${question.imageFile}`}
+            alt={`질문 ${currentQuestionIndex + 1} 이미지`}
+            className="rounded-lg w-full object-contain"
+            style={{ maxWidth: "800px", maxHeight: "300px" }}
+            onError={(e) => {
+              console.error("이미지 로드 실패:", question.imageFile);
+              setImageError(true);
+            }}
+          />
         </div>
       </div>
 
-      {/* 선택지 영역 */}
+      {/* 선택지 영역 - 음영 처리 추가 */}
       <div className="space-y-4">
         {question.options.map((option, index) => (
           <button
             key={option.id}
             className={`w-full transition-all duration-150 ${
               selectedOption === option.id
-                ? "bg-blue-50 border-blue-500"
-                : "bg-white border-gray-300 hover:border-blue-300 hover:bg-blue-50"
+                ? "bg-blue-100 border-blue-500 shadow-md"
+                : "bg-gray-50 border-gray-300 hover:border-blue-300 hover:bg-blue-50 hover:shadow-sm"
             } border-2 text-gray-800 py-4 px-4 rounded-lg text-left option-card`}
             onClick={() => handleOptionClick(option.id)}
             disabled={selectedOption !== null}
           >
             <div className="flex items-start">
-              <span className="font-medium text-blue-600 mr-3">
+              <span
+                className={`font-medium mr-3 ${
+                  selectedOption === option.id
+                    ? "text-blue-600"
+                    : "text-blue-500"
+                }`}
+              >
                 {option.id}
               </span>
-              <span>{option.text}</span>
+              <span className="text-gray-700">{option.text}</span>
             </div>
           </button>
         ))}
