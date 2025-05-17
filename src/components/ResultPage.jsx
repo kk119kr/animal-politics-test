@@ -15,10 +15,48 @@ const VectorThermometer = ({ label, value, description }) => {
   const [width, setWidth] = useState(0);
 
   useEffect(() => {
-    setTimeout(() => {
-      setWidth(percent);
-    }, 200);
-  }, [percent]);
+    function handleClickOutside(event) {
+      const dropdown = document.getElementById("saveOptions");
+      if (
+        dropdown &&
+        !dropdown.contains(event.target) &&
+        event.target.id !== "saveButton"
+      ) {
+        dropdown.classList.add("hidden");
+      }
+    }
+    // 이벤트 리스너 추가
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // 컴포넌트 언마운트 시 이벤트 리스너 제거
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // 버튼에 id 추가
+  <button
+    id="saveButton"
+    className="py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm forest-button flex items-center"
+    onClick={() =>
+      document.getElementById("saveOptions").classList.toggle("hidden")
+    }
+    disabled={isSaving}
+  >
+    {isSaving ? "저장 중..." : "이미지 저장"}
+    <svg
+      className="w-4 h-4 ml-1"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M19 9l-7 7-7-7"
+      />
+    </svg>
+  </button>;
 
   return (
     <div className="mb-4">
