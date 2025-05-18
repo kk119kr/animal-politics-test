@@ -40,6 +40,12 @@ const QuestionPage = () => {
     }, 300);
   };
 
+  // 선택지 개수에 따른 그리드 스타일 결정
+  const getOptionsGridStyle = () => {
+    // 3개 이상의 선택지가 있는 경우 스택 형태로 표시
+    return "space-y-4";
+  };
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg max-w-md w-full forest-card">
       {/* 진행 상태 표시 */}
@@ -64,7 +70,7 @@ const QuestionPage = () => {
           {question.question}
         </h2>
 
-        {/* 이미지 영역 - 테두리와 테스트 글씨 제거 */}
+        {/* 이미지 영역 */}
         <div className="mb-6 flex justify-center">
           <img
             src={`/images/${question.imageFile}`}
@@ -79,8 +85,8 @@ const QuestionPage = () => {
         </div>
       </div>
 
-      {/* 선택지 영역 - 음영 처리 추가 */}
-      <div className="space-y-4">
+      {/* 선택지 영역 - 더 유연한 레이아웃 */}
+      <div className={getOptionsGridStyle()}>
         {question.options.map((option, index) => (
           <button
             key={option.id}
@@ -88,7 +94,12 @@ const QuestionPage = () => {
               selectedOption === option.id
                 ? "bg-blue-100 border-blue-500 shadow-md"
                 : "bg-gray-50 border-gray-300 hover:border-blue-300 hover:bg-blue-50 hover:shadow-sm"
-            } border-2 text-gray-800 py-4 px-4 rounded-lg text-left option-card`}
+            } border-2 text-gray-800 py-4 px-4 rounded-lg text-left option-card ${
+              // 중간 선택지(B)에 대한 스타일 강조 (3개 선택지가 있는 경우에만)
+              question.options.length === 3 && option.id === "B"
+                ? "border-dashed border-blue-300"
+                : ""
+            }`}
             onClick={() => handleOptionClick(option.id)}
             disabled={selectedOption !== null}
           >

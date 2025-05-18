@@ -1,5 +1,4 @@
-// src/data/questions.js
-// 테스트 질문 데이터 (15개 문항) - 7개 문항 변경 적용 (간결한 버전)
+// 테스트 질문 데이터 (15개 문항) - 7개 문항에 중간 선택지 추가
 export const questions = [
   {
     id: 1,
@@ -19,6 +18,17 @@ export const questions = [
       },
       {
         id: "B",
+        text: "일부 지원 정책을 유지하되, 시장의 자율적 조정 기능도 존중해야 합니다.",
+        scores: {
+          reform: 0,
+          collectivism: 0,
+          pragmatism: 10,
+          authoritarianism: 0,
+          engagement: 5,
+        },
+      },
+      {
+        id: "C",
         text: "시장 원리에 맡기고 규제를 완화해야 합니다. 정부 개입은 시장을 왜곡합니다.",
         scores: {
           reform: -5,
@@ -139,6 +149,17 @@ export const questions = [
       },
       {
         id: "B",
+        text: "현재의 '불의 돌' 사용은 유지하되, 자연 친화적 에너지 연구에 더 많은 자원을 투자해야 합니다.",
+        scores: {
+          reform: 5,
+          collectivism: 5,
+          pragmatism: 5,
+          authoritarianism: 0,
+          engagement: 5,
+        },
+      },
+      {
+        id: "C",
         text: "'불의 돌'을 즉시 중단하고 햇빛과 바람 같은 자연 친화적 에너지로 전환해야 합니다.",
         scores: {
           reform: 20,
@@ -228,6 +249,17 @@ export const questions = [
       },
       {
         id: "B",
+        text: "혁신은 장려하되, 기업 활동이 공익에 부합하도록 적절한 규제가 필요합니다.",
+        scores: {
+          reform: 5,
+          collectivism: 0,
+          pragmatism: 10,
+          authoritarianism: 0,
+          engagement: 5,
+        },
+      },
+      {
+        id: "C",
         text: "대기업 규제를 강화하고 경제력 집중을 막아야 합니다. 공정한 시장 질서가 중요합니다.",
         scores: {
           reform: 10,
@@ -316,6 +348,17 @@ export const questions = [
       },
       {
         id: "B",
+        text: "일부 차이는 인정하되, 기회의 평등은 보장하는 균형 잡힌 접근이 필요합니다.",
+        scores: {
+          reform: 0,
+          collectivism: 5,
+          pragmatism: 5,
+          authoritarianism: 0,
+          engagement: 0,
+        },
+      },
+      {
+        id: "C",
         text: "성별에 따른 차별을 해소하고 모든 동물에게 동등한 기회를 보장해야 합니다.",
         scores: {
           reform: 20,
@@ -346,6 +389,17 @@ export const questions = [
       },
       {
         id: "B",
+        text: "경쟁과 협력, 실력과 흥미가 균형을 이루는 교육이 필요합니다.",
+        scores: {
+          reform: 0,
+          collectivism: 0,
+          pragmatism: 5,
+          authoritarianism: 0,
+          engagement: 5,
+        },
+      },
+      {
+        id: "C",
         text: "협력과 창의성 중심의 평등한 교육 환경이 중요합니다. 개인의 성장이 우선입니다.",
         scores: {
           reform: 15,
@@ -406,6 +460,17 @@ export const questions = [
       },
       {
         id: "B",
+        text: "전문가 그룹의 관리 하에 지속 가능한 채집 방식과 보존 계획을 수립해야 합니다.",
+        scores: {
+          reform: 0,
+          collectivism: 5,
+          pragmatism: 10,
+          authoritarianism: 0,
+          engagement: 5,
+        },
+      },
+      {
+        id: "C",
         text: "모든 동물에게 지식을 공유하고, 공동의 윤리적 가이드라인을 함께 만들어야 합니다.",
         scores: {
           reform: 15,
@@ -436,6 +501,17 @@ export const questions = [
       },
       {
         id: "B",
+        text: "두 동물의 조언을 균형 있게 받아들여, 전통을 존중하면서도 필요한 변화를 수용해야 합니다.",
+        scores: {
+          reform: 5,
+          collectivism: 0,
+          pragmatism: 5,
+          authoritarianism: 0,
+          engagement: 0,
+        },
+      },
+      {
+        id: "C",
         text: "카멜레온처럼 환경에 적응하며 새로운 변화를 적극적으로 받아들여야 합니다.",
         scores: {
           reform: 20,

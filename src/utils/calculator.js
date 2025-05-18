@@ -1,5 +1,5 @@
 // src/utils/calculator.js
-// 테스트 결과 계산 알고리즘
+// 테스트 결과 계산 알고리즘 - 중간 선택지 지원 및 밸런스 조정
 
 /**
  * 사용자 응답을 벡터로 변환하는 함수
@@ -50,8 +50,10 @@ export const calculateVectors = (answers, questions) => {
  * @returns {Object} - 정규화된 벡터값
  */
 export const normalizeVectors = (vectors) => {
-  // 최대 가능 점수 (15문항 * 평균 점수 15점 = 약 225점)
-  const maxPossibleScore = 225;
+  // 최대 가능 점수 (중간 선택지를 고려하여 조정)
+  // 기존: 15문항 * 평균 점수 15점 = 약 225점
+  // 새로운 최대값: 중간 선택지의 더 낮은 점수를 고려
+  const maxPossibleScore = 200;
   
   const normalized = {};
   
@@ -159,8 +161,9 @@ export const calculateWeightedScore = (userVectors, resultVectors) => {
   const cosineScore = (calculateCosineSimilarity(userVectors, resultVectors) + 1) / 2; // 0~1 범위로 변환
   const magnitudeScore = calculateMagnitudeSimilarity(userVectors, resultVectors);
   
-  // 가중치 적용 (거리: 70%, 코사인 유사도: 20%, 벡터 크기 유사도: 10%)
-  return (distScore * 0.7) + (cosineScore * 0.2) + (magnitudeScore * 0.1);
+  // 가중치 조정 (중간 선택지를 고려하여 미세 조정)
+  // 거리: 65%, 코사인 유사도: 25%, 벡터 크기 유사도: 10%
+  return (distScore * 0.65) + (cosineScore * 0.25) + (magnitudeScore * 0.1);
 };
 
 /**
@@ -184,18 +187,26 @@ export const calculateResult = (answers, questions, results) => {
   // 점수 기준 내림차순 정렬
   resultScores.sort((a, b) => b.score - a.score);
   
-  // 희귀도에 따른 추가 조정
-  // UR은 85% 이상의 유사도를 가져야 함
+  // 희귀도에 따른 조건 조정 (중간 선택지 도입으로 인해 기준 완화)
+  
+  // UR은 82% 이상의 유사도를 가져야 함 (기존 85%)
   if (resultScores[0].result.rarity === 'UR' && 
-      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.85) {
+      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.82) {
     // UR 조건을 만족하지 못하면 다음 최고 점수로 대체
     return resultScores[1].result;
   }
   
-  // SR은 80% 이상의 유사도를 가져야 함
+  // SR은 78% 이상의 유사도를 가져야 함 (기존 80%)
   if (resultScores[0].result.rarity === 'SR' && 
-      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.8) {
+      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.78) {
     // SR 조건을 만족하지 못하면 다음 최고 점수로 대체
+    return resultScores[1].result;
+  }
+  
+  // R은 70% 이상의 유사도를 가져야 함 (새로 추가된 조건)
+  if (resultScores[0].result.rarity === 'R' && 
+      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.70) {
+    // R 조건을 만족하지 못하면 다음 최고 점수로 대체 (일반적으로 C)
     return resultScores[1].result;
   }
   

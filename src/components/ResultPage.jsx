@@ -231,6 +231,40 @@ const ResultGallery = ({ allResults, currentResult }) => {
   );
 };
 
+// 각 동물에 맞는 정치성향 정의
+const getPoliticalOrientation = (resultId) => {
+  const orientations = {
+    R1: "보수 권위주의 - 안보와 전통의 수호자",
+    R2: "보수 자유주의 - 자유시장 옹호자",
+    R3: "전통 보수주의 - 문화적 보수주의자",
+    R4: "급진 진보 - 혁명적 이상주의자",
+    R5: "개혁 진보 - 공정사회 투사",
+    R6: "진보 자유주의 - 개인자유 옹호자",
+    R7: "실용 중도 - 조화로운 중재자",
+    R8: "중도 실용주의 - 근거기반 의사결정자",
+    R9: "사회 중도진보 - 공동체 가치주의자",
+    R10: "개혁적 중도 - 적응형 문제해결사",
+  };
+  return orientations[resultId] || "알 수 없는 성향";
+};
+
+// 각 동물에 맞는 선호 정당 특징 정의
+const getPartyPreference = (resultId) => {
+  const preferences = {
+    R1: "안보와 질서를 강조하는 보수 계열 정당에 친화적입니다. 전통적 가치와 국가 안보를 최우선시하며, 권위 있는 리더십을 선호합니다.",
+    R2: "경제 성장과 시장 자율성을 강조하는 보수 정당에 친화적입니다. 기업 활동의 자유와 규제 완화를 지지하며, 경제 전문가 출신 정치인의 정책에 공감합니다.",
+    R3: "전통적 가치관을 지지하는 보수 정당에 친화적이나, 급진적 변화보다 점진적 발전을 선호합니다. 문화적 전통과 도덕적 가치를 중시하는 정치 세력을 지지합니다.",
+    R4: "기존 체제의 근본적 변화를 추구하는 급진적 진보 정당에 친화적입니다. 사회 변혁과 평등을 위한 적극적 행동을 지지하며, 민중 주도의 정치 운동에 관심이 많습니다.",
+    R5: "사회 정의와 개혁을 강조하는 진보 정당에 친화적입니다. 특히 반부패, 공정성, 투명성을 강조하는 정치 세력을 지지하며, 소외된 계층의 권리 보호에 관심이 많습니다.",
+    R6: "개인의 자유와 사회적 진보를 동시에 추구하는 진보 성향 정당에 친화적입니다. 다양성과 평등을 중시하며, 개인의 권리와 자율성을 존중하는 정치인들에게 공감합니다.",
+    R7: "중도 성향의 정당이나 양 진영 간 화합을 강조하는 정치인에게 끌립니다. 극단을 피하고 실용적 타협을 통한 문제 해결을 선호하며, 통합을 지향하는 정치 세력에 관심을 보입니다.",
+    R8: "데이터와 증거에 기반한 실용적 접근을 하는 정치 세력을 지지합니다. 이념적 색채보다 문제의 효율적 해결책을 중시하며, 전문성과 합리성을 갖춘 정치인에게 끌립니다.",
+    R9: "공동체 가치와 포용적 복지를 강조하는 중도진보 정당에 친화적입니다. 사회적 연대와 상호 협력을 중시하며, 참여 민주주의를 지향하는 정치 세력에 공감합니다.",
+    R10: "변화와 혁신을 추구하면서도 현실적 방안을 중시하는 중도개혁 세력에 친화적입니다. 유연한 사고와 상황 적응력을 갖춘 정치인을 선호하며, 혁신적 접근법에 관심이 많습니다.",
+  };
+  return preferences[resultId] || "특별히 선호하는 정당 특성이 없습니다.";
+};
+
 // 주요 컴포넌트
 function ResultPage() {
   const { result, userVectors, restartTest } = useTest();
@@ -238,7 +272,12 @@ function ResultPage() {
   const [copied, setCopied] = useState(false);
   const resultCardRef = useRef(null);
   const fullResultRef = useRef(null);
-  const [isSaving, setIsSaving] = useState(false); // isSaving 상태 추가
+  const [isSaving, setIsSaving] = useState(false);
+  
+  // 해당 결과의 정치적 성향 가져오기
+  const politicalOrientation = getPoliticalOrientation(result?.id);
+  // 해당 결과의 선호 정당 특징 가져오기
+  const partyPreference = getPartyPreference(result?.id);
 
   // 카드 애니메이션 스타일
   const cardAnimationStyle = `
@@ -295,6 +334,7 @@ function ResultPage() {
     { id: "media", label: "선호 미디어" },
     { id: "strengths", label: "장점" },
     { id: "challenges", label: "도전점" },
+    { id: "party", label: "선호 정당 특징" }, // 새로운 탭 추가
   ];
 
   // 결과가 없으면 로딩 표시
@@ -495,9 +535,16 @@ function ResultPage() {
       className="bg-white p-6 rounded-xl shadow-lg max-w-3xl w-full forest-card animate-fade-in"
       ref={fullResultRef}
     >
-      <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
-        테스트 결과
-      </h1>
+      {/* 결과 헤더 - 기존 "테스트 결과" 대신 애니폴리 소개 문구 추가 */}
+      <div className="text-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">
+          당신이 뽑은 애니폴리는 '{result.name}'입니다!
+        </h1>
+        <p className="text-lg mt-2 text-gray-700">
+          당신의 정치적 성향은 <span className="font-semibold">{politicalOrientation}</span>에 가깝습니다.
+        </p>
+        <div className="italic text-gray-500 mt-1 text-sm">"{result.quote}"</div>
+      </div>
 
       <div className="md:flex gap-6">
         {/* 결과 카드 이미지 섹션 */}
@@ -690,6 +737,15 @@ function ResultPage() {
                   <h3 className="font-bold text-md mb-2">도전점</h3>
                   <p className="text-sm text-gray-700 leading-relaxed">
                     {result.challenges}
+                  </p>
+                </div>
+              )}
+              
+              {activeTab === "party" && (
+                <div>
+                  <h3 className="font-bold text-md mb-2">선호 정당 특징</h3>
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    {partyPreference}
                   </p>
                 </div>
               )}
