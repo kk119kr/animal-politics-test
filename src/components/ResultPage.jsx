@@ -606,7 +606,7 @@ function ResultPage() {
             <img
               src={`/images/${result.id}.png`}
               alt={`${result.name} (${result.animal})`}
-              className="w-full h-auto rounded-2xl shadow-lg"
+              className="w-full h-auto shadow-lg"
               onError={(e) => {
                 console.error(`이미지 로드 실패: ${result.id}.png`);
                 e.target.onerror = null;
