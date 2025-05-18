@@ -1,14 +1,6 @@
-/* The following @tailwind directives require Tailwind CSS with PostCSS or a compatible build tool. 
-   If you see an "Unknown at rule @tailwind" error, ensure your project is set up with Tailwind CSS.
-   See: https://tailwindcss.com/docs/installation */
-/* @tailwind directives removed because Tailwind CSS is not configured in this project.
-   If you want to use Tailwind, set up Tailwind CSS with PostCSS as described in https://tailwindcss.com/docs/installation */
-
-/* 결과 카드 모서리 반경 일치 */
-.forest-card,
-.forest-card img {
-  border-radius: 0.75rem; /* rounded-xl과 동일한 크기 */
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* 전체 폰트 설정 */
 body {
@@ -74,12 +66,6 @@ body {
 .forest-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-}
-
-/* 결과 카드 모서리 반경 일치 */
-.forest-card,
-.forest-card img {
-  border-radius: 0.75rem; /* rounded-xl과 동일한 크기 */
 }
 
 /* 버튼 스타일 */

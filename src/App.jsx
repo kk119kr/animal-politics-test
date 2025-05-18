@@ -2,7 +2,6 @@ import { TestProvider, useTest } from "./contexts/TestContext";
 import StartPage from "./components/StartPage";
 import QuestionPage from "./components/QuestionPage";
 import ResultPage from "./components/ResultPage";
-import Footer from "./components/Footer";
 import { useState, useEffect } from "react";
 
 // 실제 앱 컴포넌트
@@ -27,18 +26,24 @@ const AppContent = () => {
   }, [page, currentPage]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-indigo-50 to-purple-50 flex flex-col">      <div className="flex-grow flex items-center justify-center p-4">
-        <div
-          className={`transition-opacity duration-300 ${
-            isTransitioning ? "opacity-0" : "opacity-100"
-          } max-w-4xl w-full`}
-        >
-          {currentPage === "start" && <StartPage />}
-          {currentPage === "question" && <QuestionPage />}
-          {currentPage === "result" && <ResultPage />}
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+      <div
+        className={`transition-opacity duration-300 ${
+          isTransitioning ? "opacity-0" : "opacity-100"
+        }`}
+      >
+        {currentPage === "start" && <StartPage />}
+        {currentPage === "question" && <QuestionPage />}
+        {currentPage === "result" && <ResultPage />}
       </div>
-      <Footer />
+
+      {/* 푸터 */}
+      <div className="fixed bottom-2 w-full text-center text-gray-400 text-xs">
+        © 2025 정치성향테스트 | 제작: 송혁규, 유혜인
+        <br />
+        문의: robehk@naver.com | 모든 콘텐츠 및 이미지의 권리는 제작자에게
+        있습니다.
+      </div>
     </div>
   );
 };
