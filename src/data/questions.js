@@ -48,7 +48,7 @@ export const questions = [
     options: [
       {
         id: "A",
-        text: "현명한 부엉이가 계획을 세워 모든 동물에게 역할을 나눠줘야 해요. 빨리 복구하려면 지휘자가 필요해요.",
+        text: "현명한 비버가 계획을 세워 모든 동물에게 역할을 나눠줘야 해요. 빨리 복구하려면 지휘자가 필요해요.",
         scores: {
           reform: -5,
           collectivism: 10,
@@ -134,11 +134,11 @@ export const questions = [
   {
     id: 5,
     question:
-      "숲속에서 반짝이는 '빛나는 돌'을 발견했어요. 매우 유용하지만 너무 많이 사용하면 위험할 수도 있대요.",
+      "숲속에서 강력한 '불의 돌'을 발견했어요. 매우 유용하지만 너무 많이 사용하면 위험할 수도 있대요.",
     options: [
       {
         id: "A",
-        text: "'빛나는 돌'을 계속 사용하되, 안전하게 쓰는 방법을 연구하고 조금씩 다른 방법도 찾아봐요.",
+        text: "'불의 돌'은 우리 숲의 미래예요. 위험을 너무 걱정하지 말고 적극적으로 활용해야 해요.",
         scores: {
           reform: -10,
           collectivism: 0,
@@ -149,7 +149,7 @@ export const questions = [
       },
       {
         id: "B",
-        text: "지금처럼 쓰되, 햇빛과 바람의 힘을 이용하는 방법도 함께 연구해요.",
+        text: "조심스럽게 사용하되, 햇빛과 바람의 힘을 이용하는 방법도 함께 연구해 대안을 마련해요.",
         scores: {
           reform: 5,
           collectivism: 5,
@@ -160,7 +160,7 @@ export const questions = [
       },
       {
         id: "C",
-        text: "'빛나는 돌' 사용을 중단하고 즉시 햇빛과 바람의 힘만 이용해요. 자연에 가장 친근한 방법이에요.",
+        text: "'불의 돌' 사용을 중단하고 즉시 햇빛과 바람의 힘만 이용해요. 자연에 가장 친근한 방법이에요.",
         scores: {
           reform: 20,
           collectivism: 10,
@@ -175,7 +175,7 @@ export const questions = [
   {
     id: 6,
     question:
-      "나이 든 할머니 여우와 아픈 토끼들을 어떻게 돌볼지 고민하고 있어요.",
+      "여우원숭이가 아픈 토끼들을 어떻게 돌볼지 고민하고 있어요.",
     options: [
       {
         id: "A",
@@ -205,11 +205,11 @@ export const questions = [
   {
     id: 7,
     question:
-      "토끼와 다람쥐들이 맛있는 버섯 밭을 두고 다투고 있어요. 어떻게 해결하면 좋을까요?",
+      "토끼와 다람쥐들이 맛있는 사과나무를 두고 다투고 있어요. 어떻게 해결하면 좋을까요?",
     options: [
       {
         id: "A",
-        text: "숲의 어른인 올빼미 할아버지가 규칙을 정해주고, 모두가 그 결정을 따라야 해요.",
+        text: "숲의 어른들이 규칙을 정해주고, 모두가 그 결정을 따라야 해요.",
         scores: {
           reform: -5,
           collectivism: 10,
@@ -333,11 +333,11 @@ export const questions = [
   },
   {
     id: 11,
-    question: "수컷과 암컷 동물들이 숲속에서 하는 일이 다른 것에 대해 토론하고 있어요.",
+    question: "숲속에서 동물들이 하는 일의 역할 분담에 대해 토론하고 있어요.",
     options: [
       {
         id: "A",
-        text: "자연이 정한 역할이 있어요. 수컷 사슴은 뿔로 보호하고, 암컷은 아이를 돌보는 게 자연스러워요.",
+        text: "자연이 정한 역할이 있어요. 오랜 전통처럼 각자의 타고난 특성에 맞는 일을 하는 게 좋아요.",
         scores: {
           reform: -20,
           collectivism: 0,
@@ -348,7 +348,7 @@ export const questions = [
       },
       {
         id: "B",
-        text: "일부 차이는 인정하되, 모든 동물이 자신의 재능을 살릴 수 있는 기회가 필요해요.",
+        text: "일부 전통적인 역할은 인정하되, 모든 동물이 자신의 재능을 살릴 수 있는 기회가 필요해요.",
         scores: {
           reform: 0,
           collectivism: 5,
@@ -359,7 +359,7 @@ export const questions = [
       },
       {
         id: "C",
-        text: "수컷이든 암컷이든 하고 싶은 일을 자유롭게 선택할 수 있어야 해요. 제한을 두면 안 돼요.",
+        text: "누구든 하고 싶은 일을 자유롭게 선택할 수 있어야 해요. 전통적인 역할에 제한을 두면 안 돼요.",
         scores: {
           reform: 20,
           collectivism: 10,
@@ -374,25 +374,25 @@ export const questions = [
   {
     id: 12,
     question:
-      "새끼 동물들이 배우는 숲속 학교에서 어떤 놀이가 더 좋을지 고민하고 있어요.",
+      "숲에서 일어나는 일들을 알리는 '숲소식통'을 누가 운영할지 논의 중이에요.",
     options: [
       {
         id: "A",
-        text: "누가 더 빨리 달리고 높이 뛰는지 경주하는 놀이가 좋아요. 실력을 키우는 게 중요해요.",
+        text: "숲의 지혜로운 어른들이 중요한 소식만 골라서 전달해야 해요. 잘못된 소문은 혼란을 일으킬 수 있어요.",
         scores: {
           reform: -15,
-          collectivism: -15,
+          collectivism: 5,
           pragmatism: 10,
-          authoritarianism: 10,
-          engagement: 0,
+          authoritarianism: 15,
+          engagement: -5,
         },
       },
       {
         id: "B",
-        text: "때로는 경주도 하고, 때로는 함께 둥지 짓기도 하며 다양한 놀이를 균형 있게 해요.",
+        text: "다양한 동물 대표들이 함께 모여 균형 있게 소식을 전하되, 기본적인 규칙은 필요해요.",
         scores: {
           reform: 0,
-          collectivism: 0,
+          collectivism: 5,
           pragmatism: 5,
           authoritarianism: 0,
           engagement: 5,
@@ -400,12 +400,12 @@ export const questions = [
       },
       {
         id: "C",
-        text: "모두 함께 즐기는 협동 놀이가 좋아요. 누구든 소외되지 않고 자신의 색깔을 표현할 수 있어요.",
+        text: "모든 동물이 자유롭게 보고 들은 것을 나눌 수 있어야 해요. 정보는 제한 없이 공유되는 게 좋아요.",
         scores: {
           reform: 15,
-          collectivism: 15,
+          collectivism: -5,
           pragmatism: -5,
-          authoritarianism: -10,
+          authoritarianism: -15,
           engagement: 10,
         },
       },
@@ -415,11 +415,11 @@ export const questions = [
   {
     id: 13,
     question:
-      "숲 바깥에서 무서운 여우가 나타나 작은 토끼들을 위협하고 있어요.",
+      "숲 바깥에서 맹수가 나타나 작은 동물들을 위협하고 있어요.",
     options: [
       {
         id: "A",
-        text: "강한 곰과 멧돼지들이 순찰대를 만들어 숲 전체를 지켜주는 게 좋겠어요. 안전이 최우선이에요.",
+        text: "강한 동물들이 순찰대를 만들어 숲 전체를 지켜주는 게 좋겠어요. 안전이 최우선이에요.",
         scores: {
           reform: -5,
           collectivism: 15,
@@ -445,11 +445,11 @@ export const questions = [
   {
     id: 14,
     question:
-      "아픈 동물을 치료하는 신비한 꽃을 발견했어요. 하지만 너무 많이 따면 사라질 수도 있대요.",
+      "아픈 동물을 치료하는 신비한 식물을 발견했어요. 하지만 너무 많이 따면 사라질 수도 있대요.",
     options: [
       {
         id: "A",
-        text: "현명한 부엉이 할아버지와 다른 어른들이 꽃을 관리하고, 정말 필요할 때만 사용하게 해요.",
+        text: "현명한 어른들이 식물을 관리하고, 정말 필요할 때만 사용하게 해요.",
         scores: {
           reform: -10,
           collectivism: 10,
@@ -460,7 +460,7 @@ export const questions = [
       },
       {
         id: "B",
-        text: "약초에 대해 잘 아는 토끼와 다람쥐들이 함께 꽃을 돌보고 지속 가능한 방법을 찾아요.",
+        text: "약초에 대해 잘 아는 토끼와 다람쥐들이 함께 식물을 돌보고 지속 가능한 방법을 찾아요.",
         scores: {
           reform: 0,
           collectivism: 5,
@@ -471,7 +471,7 @@ export const questions = [
       },
       {
         id: "C",
-        text: "모든 동물에게 꽃에 대한 지식을 알려주고, 서로 약속을 지키며 소중하게 다루기로 해요.",
+        text: "모든 동물에게 식물에 대한 지식을 알려주고, 서로 약속을 지키며 소중하게 다루기로 해요.",
         scores: {
           reform: 15,
           collectivism: 5,
