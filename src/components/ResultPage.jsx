@@ -1,96 +1,75 @@
-// src/components/ResultPage.jsx
+// 최종 ResultPage.jsx 수정 부분 (주요 변경사항만 포함)
+
 import { useTest } from "../contexts/TestContext";
 import { useEffect, useRef, useState } from "react";
 import results from "../data/results";
 
-// 벡터 온도계 컴포넌트
-const VectorThermometer = ({ label, value, description }) => {
-  const percent = (value + 100) / 2;
-  let color = "bg-gray-400";
-  if (value > 50) color = "bg-red-500";
-  else if (value > 0) color = "bg-orange-400";
-  else if (value > -50) color = "bg-blue-400";
-  else color = "bg-blue-600";
+// ... 기존 코드 생략 ...
 
-  const [width, setWidth] = useState(0);
-
-  // 애니메이션 효과를 위한 useEffect
-  useEffect(() => {
-    // 약간의 지연 후 너비 설정
-    const timer = setTimeout(() => {
-      setWidth(percent);
-    }, 200);
-    return () => clearTimeout(timer);
-  }, [percent]);
-
-  return (
-    <div className="mb-4">
-      <div className="flex justify-between mb-1">
-        <span className="text-sm font-medium text-gray-700">{label}</span>
-        <span className="text-sm font-medium text-gray-700">{value}</span>
-      </div>
-      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-        <div
-          className={`${color} h-3 rounded-full transition-all duration-1000 vector-thermometer`}
-          style={{ width: `${width}%` }}
-        ></div>
-      </div>
-      <p className="text-xs text-gray-500 mt-1">{description}</p>
-    </div>
-  );
-};
-
-// 탭 컴포넌트
-const ResultTabs = ({ activeTab, setActiveTab, tabs }) => {
-  return (
-    <div className="flex border-b border-gray-200 mb-4">
-      {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          className={`py-2 px-4 text-sm font-medium transition-colors duration-200 relative 
-            ${
-              activeTab === tab.id
-                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          onClick={() => setActiveTab(tab.id)}
-        >
-          {tab.label}
-          {activeTab !== tab.id && (
-            <span className="absolute inset-0 bg-gray-100 opacity-0 hover:opacity-10 transition-opacity duration-200"></span>
-          )}
-        </button>
-      ))}
-    </div>
-  );
-};
-
-// 궁합 표시 섹션 컴포넌트
+// 수정된 CompatibilitySection 컴포넌트
 const CompatibilitySection = ({ currentResult, allResults }) => {
-  const getCompatibleTypes = (currentId) => {
-    const compatibilityMap = {
-      R1: ["R7", "R3"],
-      R2: ["R8", "R10"],
-      R3: ["R1", "R9"],
-      R4: ["R5", "R6"],
-      R5: ["R4", "R9"],
-      R6: ["R4", "R10"],
-      R7: ["R1", "R8"],
-      R8: ["R2", "R7"],
-      R9: ["R3", "R5"],
-      R10: ["R2", "R6"],
+  // 더 상세한 궁합 정보를 제공하는 함수
+  const getCompatibilityInfo = (currentId) => {
+    const compatibilityData = {
+      R1: {
+        compatible: ["R7", "R3"],
+        description: "규칙과 전통을 중시하는 성향으로, 균형있는 중재자와 전통 수호자와 잘 어울립니다. 질서와 안정을 바탕으로 서로의 가치관을 존중하며 협력할 수 있습니다."
+      },
+      R2: {
+        compatible: ["R8", "R10"],
+        description: "실용적인 경제관을 가진 성향으로, 분석적인 지식 탐구자와 유연한 혁신가와 좋은 시너지를 발휘합니다. 효율과 혁신을 추구하는 대화가 가능합니다."
+      },
+      R3: {
+        compatible: ["R1", "R9"],
+        description: "문화적 전통을 소중히 여기는 성향으로, 원칙 수호자와 공동체 건설자와 가치관을 공유합니다. 역사와 공동체적 가치를 중심으로 소통할 수 있습니다."
+      },
+      R4: {
+        compatible: ["R5", "R6"],
+        description: "급진적 변화를 추구하는 성향으로, 정의 수호자와 자유 추구자와 함께할 때 사회 개혁에 대한 열정적인 토론이 가능합니다. 이상적인 비전을 함께 나눌 수 있습니다."
+      },
+      R5: {
+        compatible: ["R4", "R9"],
+        description: "정의와 공정을 중시하는 성향으로, 열정적인 혁신가와 공동체 가치를 지닌 동물들과 좋은 대화가 가능합니다. 사회적 약자와 공동체에 대한 관심을 공유합니다."
+      },
+      R6: {
+        compatible: ["R4", "R10"],
+        description: "개인의 자유와 다양성을 중시하는 성향으로, 열정 혁신가와 유연한 혁신가와 창의적인 대화를 나눌 수 있습니다. 자유와 변화에 대한 가치를 공유합니다."
+      },
+      R7: {
+        compatible: ["R1", "R8"],
+        description: "균형과 조화를 추구하는 성향으로, 원칙 수호자와 지식 탐구자 사이에서 중재 역할을 합니다. 다양한 관점을 이해하고 통합하는 대화가 가능합니다."
+      },
+      R8: {
+        compatible: ["R2", "R7"],
+        description: "데이터와 분석을 중시하는 성향으로, 시장 신봉자와 균형 조율자와 깊이 있는 대화가 가능합니다. 실용적이고 합리적인 해결책을 함께 모색할 수 있습니다."
+      },
+      R9: {
+        compatible: ["R3", "R5"],
+        description: "공동체적 가치를 중시하는 성향으로, 전통 수호자와 정의 수호자와 함께할 때 사회적 연대에 관한 의미 있는 대화가 가능합니다. 서로 돕는 가치관을 공유합니다."
+      },
+      R10: {
+        compatible: ["R2", "R6"],
+        description: "변화와 적응을 중시하는 성향으로, 시장 신봉자의 실용성과 자유 추구자의 창의성을 모두 수용합니다. 혁신적이고 유연한 사고방식을 함께 나눌 수 있습니다."
+      },
     };
-    return compatibilityMap[currentId] || [];
+    
+    return compatibilityData[currentId] || { compatible: [], description: "다른 유형들과의 상호작용을 통해 더 폭넓은 시각을 얻을 수 있습니다." };
   };
 
-  const compatibleIds = getCompatibleTypes(currentResult.id);
-  const compatibleResults = compatibleIds
+  const compatibilityInfo = getCompatibilityInfo(currentResult.id);
+  const compatibleResults = compatibilityInfo.compatible
     .map((id) => allResults.find((result) => result.id === id))
     .filter(Boolean);
 
   return (
     <div className="mt-8 bg-gray-50 rounded-lg p-4">
       <h3 className="font-bold text-lg mb-3 text-center">잘 어울리는 성향</h3>
+      
+      {/* 먼저 어울리는 성향에 대한 설명 */}
+      <p className="text-sm text-gray-700 mb-4 text-center">
+        {compatibilityInfo.description}
+      </p>
+      
       <div className="flex justify-center space-x-4">
         {compatibleResults.map((result) => (
           <div key={result.id} className="text-center">
@@ -105,6 +84,13 @@ const CompatibilitySection = ({ currentResult, allResults }) => {
                   {result.name}
                 </span>
               </div>
+              {/* 희귀도 뱃지 추가 */}
+              <div className={`absolute top-0 right-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white
+                ${result.rarity === 'UR' ? 'bg-yellow-500' : 
+                  result.rarity === 'SR' ? 'bg-purple-500' : 
+                  result.rarity === 'R' ? 'bg-blue-500' : 'bg-gray-500'}`}>
+                {result.rarity}
+              </div>
             </div>
             <div className="mt-1">
               <span className="text-xs text-gray-600">{result.animal}</span>
@@ -112,430 +98,26 @@ const CompatibilitySection = ({ currentResult, allResults }) => {
           </div>
         ))}
       </div>
-      <p className="text-xs text-center text-gray-500 mt-2">
-        이 유형들과 의견을 나눌 때 더 풍부한 대화가 이루어질 수 있습니다
+      
+      <p className="text-xs text-center text-gray-500 mt-4">
+        서로 다른 성향이지만 보완적인 가치관을 가진 유형들과 대화할 때 더 풍부한 통찰을 얻을 수 있습니다.
       </p>
     </div>
   );
 };
 
-// 다른 결과 유형 갤러리 컴포넌트
-const ResultGallery = ({ allResults, currentResult }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const resultsByRarity = {
-    UR: allResults.filter((r) => r.rarity === "UR"),
-    SR: allResults.filter((r) => r.rarity === "SR"),
-    R: allResults.filter((r) => r.rarity === "R"),
-    C: allResults.filter((r) => r.rarity === "C"),
-  };
-
-  const rarityLabels = {
-    UR: "전설",
-    SR: "초희귀",
-    R: "희귀",
-    C: "일반",
-  };
-
-  return (
-    <div className="mt-6">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between bg-blue-50 hover:bg-blue-100 p-3 rounded-lg transition-colors duration-200"
-      >
-        <span className="font-medium">다른 유형 둘러보기</span>
-        <svg
-          className={`w-5 h-5 transition-transform duration-200 ${
-            isOpen ? "transform rotate-180" : ""
-          }`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
-      </button>
-
-      {isOpen && (
-        <div className="mt-3 bg-gray-50 rounded-lg p-4 animate-fade-in">
-          <p className="text-sm text-gray-600 mb-4">
-            숲속에는 다양한 정치 성향의 동물들이 살고 있습니다. 각 유형을
-            클릭하면 더 자세한 내용을 볼 수 있습니다.
-          </p>
-
-          {Object.keys(resultsByRarity).map(
-            (rarity) =>
-              resultsByRarity[rarity].length > 0 && (
-                <div key={rarity} className="mb-5">
-                  <h4 className="text-sm font-bold mb-2 flex items-center">
-                    <span
-                      className={`inline-block w-3 h-3 rounded-full mr-2 ${
-                        rarity === "UR"
-                          ? "bg-yellow-500"
-                          : rarity === "SR"
-                          ? "bg-purple-500"
-                          : rarity === "R"
-                          ? "bg-blue-500"
-                          : "bg-gray-400"
-                      }`}
-                    ></span>
-                    {rarityLabels[rarity]} ({resultsByRarity[rarity].length})
-                  </h4>
-
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                    {resultsByRarity[rarity].map((result) => (
-                      <div
-                        key={result.id}
-                        className={`relative cursor-pointer transform hover:scale-105 transition-all duration-200 ${
-                          result.id === currentResult.id
-                            ? "ring-2 ring-blue-500 ring-offset-2"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          window.open(`/gallery/${result.id}`, "_blank")
-                        }
-                      >
-                        <img
-                          src={`/images/${result.id}.png`}
-                          alt={result.name}
-                          className="w-full h-auto rounded-lg shadow-sm"
-                        />
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-1 rounded-b-lg">
-                          <span className="text-white text-xs font-medium truncate block">
-                            {result.name}
-                          </span>
-                        </div>
-                        {result.id === currentResult.id && (
-                          <div className="absolute top-1 right-1 bg-blue-500 text-white text-xs rounded-full px-1.5 py-0.5">
-                            현재
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )
-          )}
-
-          <p className="text-xs text-gray-500 text-center mt-3">
-            내 성향과 다른 유형들을 비교해 보세요!
-          </p>
-        </div>
-      )}
-    </div>
-  );
-};
-
-// 각 동물에 맞는 정치성향 정의
-const getPoliticalOrientation = (resultId) => {
-  const orientations = {
-    R1: "보수 권위주의 - 안보와 전통의 수호자",
-    R2: "보수 자유주의 - 자유시장 옹호자",
-    R3: "전통 보수주의 - 문화적 보수주의자",
-    R4: "급진 진보 - 혁명적 이상주의자",
-    R5: "개혁 진보 - 공정사회 투사",
-    R6: "진보 자유주의 - 개인자유 옹호자",
-    R7: "실용 중도 - 조화로운 중재자",
-    R8: "중도 실용주의 - 근거기반 의사결정자",
-    R9: "사회 중도진보 - 공동체 가치주의자",
-    R10: "개혁적 중도 - 적응형 문제해결사",
-  };
-  return orientations[resultId] || "알 수 없는 성향";
-};
-
-// 각 동물에 맞는 선호 정당 특징 정의
-const getPartyPreference = (resultId) => {
-  const preferences = {
-    R1: "안보와 질서를 강조하는 보수 계열 정당에 친화적입니다. 전통적 가치와 국가 안보를 최우선시하며, 권위 있는 리더십을 선호합니다.",
-    R2: "경제 성장과 시장 자율성을 강조하는 보수 정당에 친화적입니다. 기업 활동의 자유와 규제 완화를 지지하며, 경제 전문가 출신 정치인의 정책에 공감합니다.",
-    R3: "전통적 가치관을 지지하는 보수 정당에 친화적이나, 급진적 변화보다 점진적 발전을 선호합니다. 문화적 전통과 도덕적 가치를 중시하는 정치 세력을 지지합니다.",
-    R4: "기존 체제의 근본적 변화를 추구하는 급진적 진보 정당에 친화적입니다. 사회 변혁과 평등을 위한 적극적 행동을 지지하며, 민중 주도의 정치 운동에 관심이 많습니다.",
-    R5: "사회 정의와 개혁을 강조하는 진보 정당에 친화적입니다. 특히 반부패, 공정성, 투명성을 강조하는 정치 세력을 지지하며, 소외된 계층의 권리 보호에 관심이 많습니다.",
-    R6: "개인의 자유와 사회적 진보를 동시에 추구하는 진보 성향 정당에 친화적입니다. 다양성과 평등을 중시하며, 개인의 권리와 자율성을 존중하는 정치인들에게 공감합니다.",
-    R7: "중도 성향의 정당이나 양 진영 간 화합을 강조하는 정치인에게 끌립니다. 극단을 피하고 실용적 타협을 통한 문제 해결을 선호하며, 통합을 지향하는 정치 세력에 관심을 보입니다.",
-    R8: "데이터와 증거에 기반한 실용적 접근을 하는 정치 세력을 지지합니다. 이념적 색채보다 문제의 효율적 해결책을 중시하며, 전문성과 합리성을 갖춘 정치인에게 끌립니다.",
-    R9: "공동체 가치와 포용적 복지를 강조하는 중도진보 정당에 친화적입니다. 사회적 연대와 상호 협력을 중시하며, 참여 민주주의를 지향하는 정치 세력에 공감합니다.",
-    R10: "변화와 혁신을 추구하면서도 현실적 방안을 중시하는 중도개혁 세력에 친화적입니다. 유연한 사고와 상황 적응력을 갖춘 정치인을 선호하며, 혁신적 접근법에 관심이 많습니다.",
-  };
-  return preferences[resultId] || "특별히 선호하는 정당 특성이 없습니다.";
-};
+// ... 기존 코드 생략 ...
 
 // 주요 컴포넌트
 function ResultPage() {
-  const { result, userVectors, restartTest } = useTest();
-  const [activeTab, setActiveTab] = useState("traits");
-  const [copied, setCopied] = useState(false);
-  const resultCardRef = useRef(null);
-  const fullResultRef = useRef(null);
-  const [isSaving, setIsSaving] = useState(false);
-  
-  // 해당 결과의 정치적 성향 가져오기
-  const politicalOrientation = getPoliticalOrientation(result?.id);
-  // 해당 결과의 선호 정당 특징 가져오기
-  const partyPreference = getPartyPreference(result?.id);
-
-  // 카드 애니메이션 스타일
-  const cardAnimationStyle = `
-    @keyframes cardFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
-    }
-    .result-card-animate {
-      animation: cardFloat 3s ease-in-out infinite;
-    }
-  `;
-
-  // 스타일 태그 추가
-  useEffect(() => {
-    if (!document.getElementById("card-animation-style")) {
-      const styleEl = document.createElement("style");
-      styleEl.id = "card-animation-style";
-      styleEl.textContent = cardAnimationStyle;
-      document.head.appendChild(styleEl);
-
-      return () => {
-        const existingStyle = document.getElementById("card-animation-style");
-        if (existingStyle) {
-          existingStyle.remove();
-        }
-      };
-    }
-  }, []);
-
-  // 외부 클릭 처리를 위한 이벤트 리스너
-  useEffect(() => {
-    function handleClickOutside(event) {
-      const dropdown = document.getElementById("saveOptions");
-      if (
-        dropdown &&
-        !dropdown.contains(event.target) &&
-        event.target.id !== "saveButton"
-      ) {
-        dropdown.classList.add("hidden");
-      }
-    }
-
-    // 이벤트 리스너 추가
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      // 컴포넌트 언마운트 시 이벤트 리스너 제거
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  // 탭 정의
-  const tabs = [
-    { id: "traits", label: "행동 특성" },
-    { id: "media", label: "선호 미디어" },
-    { id: "strengths", label: "장점" },
-    { id: "challenges", label: "도전점" },
-    { id: "party", label: "선호 정당 특징" }, // 새로운 탭 추가
-  ];
-
-  // 결과가 없으면 로딩 표시
-  if (!result) {
-    return (
-      <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center animate-pulse">
-        <div className="w-12 h-12 rounded-full bg-blue-200 mx-auto mb-4"></div>
-        <div className="h-6 bg-gray-200 rounded mb-4 w-3/4 mx-auto"></div>
-        <div className="h-4 bg-gray-200 rounded mb-6 w-1/2 mx-auto"></div>
-        <div className="h-40 bg-gray-100 rounded-lg mb-4"></div>
-        <p className="text-gray-500">결과를 계산 중입니다...</p>
-      </div>
-    );
-  }
-
-  // URL 복사 함수
-  const copyToClipboard = () => {
-    const shareUrl = `${window.location.origin}?result=${result.id}`;
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-
-  // 카카오톡 공유 함수 추가
-  const shareToKakao = () => {
-    if (window.Kakao && window.Kakao.Share) {
-      try {
-        // 결과 ID를 URL에 추가한 공유 링크 생성
-        const shareUrl = `${window.location.origin}?result=${result.id}`;
-
-        window.Kakao.Share.sendDefault({
-          objectType: "feed",
-          content: {
-            title: `나의 정치성향 동물은 ${result.name}(${result.animal})입니다!`,
-            description: "어느 당도 아닌 동물입니다만? - 정치성향테스트",
-            imageUrl: `${window.location.origin}/images/${result.id}.png`,
-            link: {
-              mobileWebUrl: shareUrl,
-              webUrl: shareUrl,
-            },
-          },
-          buttons: [
-            {
-              title: "결과 확인하기",
-              link: {
-                mobileWebUrl: shareUrl,
-                webUrl: shareUrl,
-              },
-            },
-            {
-              title: "테스트 해보기",
-              link: {
-                mobileWebUrl: window.location.origin,
-                webUrl: window.location.origin,
-              },
-            },
-          ],
-        });
-      } catch (error) {
-        console.error("카카오 공유 오류:", error);
-        alert("카카오 공유에 문제가 발생했습니다. 다른 방법으로 공유해주세요.");
-      }
-    } else {
-      alert(
-        "카카오톡 SDK를 불러오는데 실패했습니다. 다른 방법으로 공유해주세요."
-      );
-    }
-  };
-
-  // 개선된 이미지 저장 함수
-  const saveResultImage = async (type) => {
-    if (!result) return;
-
-    // 저장 진행 중 표시
-    setIsSaving(true);
-
-    try {
-      // html2canvas 동적 import
-      const html2canvasModule = await import("html2canvas");
-      const html2canvas = html2canvasModule.default;
-
-      // 저장 전 UI 요소 상태 저장
-      const saveOptions = document.getElementById("saveOptions");
-      const saveOptionsDisplayStyle = saveOptions
-        ? saveOptions.style.display
-        : "none";
-
-      // 저장 옵션 드롭다운 숨기기
-      if (saveOptions) {
-        saveOptions.style.display = "none";
-      }
-
-      // 사용자가 선택한 요소 (카드만 또는 전체 결과)
-      const targetElement =
-        type === "card" ? resultCardRef.current : fullResultRef.current;
-
-      if (!targetElement) {
-        throw new Error("대상 요소를 찾을 수 없습니다.");
-      }
-
-      // 캡처 설정 - 고품질 이미지를 위한 설정 개선
-      const options = {
-        backgroundColor: type === "card" ? null : "#ffffff",
-        scale: 3, // 더 높은 해상도 (2 → 3)
-        useCORS: true, // 외부 이미지 로드 허용
-        allowTaint: true,
-        logging: false,
-        removeContainer: false, // 임시 컨테이너 제거
-        imageTimeout: 15000, // 이미지 로드 타임아웃 증가
-        width: targetElement.offsetWidth,
-        height: targetElement.offsetHeight,
-      };
-
-      // 결과 요소를 캡처
-      const canvas = await html2canvas(targetElement, options);
-
-      // 이미지로 변환 (품질 개선)
-      const imgData = canvas.toDataURL("image/png", 1.0); // 최대 품질(1.0) 설정
-
-      // 이미지 다운로드 링크 생성
-      const link = document.createElement("a");
-      link.href = imgData;
-      link.download = `정치성향테스트_${result.name}_${
-        type === "card" ? "카드" : "전체결과"
-      }.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      // UI 원상복구
-      if (saveOptions) {
-        saveOptions.style.display = saveOptionsDisplayStyle;
-      }
-
-      alert("이미지가 저장되었습니다!");
-    } catch (error) {
-      console.error("이미지 생성 오류:", error);
-      alert("이미지 생성에 실패했습니다. 화면을 직접 캡처하여 저장해주세요.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  // 카드만 전용으로 저장하는 함수 (캡처가 아닌 이미지 직접 다운로드)
-  const saveCardImageDirectly = () => {
-    if (!result) return;
-    setIsSaving(true);
-
-    try {
-      // 카드 이미지 URL 가져오기
-      const cardUrl = `/images/${result.id}.png`;
-
-      // 이미지 로드
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = function () {
-        // 캔버스 생성
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-
-        // 이미지 그리기
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-
-        // 캔버스를 이미지로 변환
-        const dataURL = canvas.toDataURL("image/png", 1.0);
-
-        // 이미지 다운로드
-        const link = document.createElement("a");
-        link.href = dataURL;
-        link.download = `정치성향테스트_${result.name}_카드.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        setIsSaving(false);
-        alert("카드 이미지가 저장되었습니다!");
-      };
-
-      img.onerror = function () {
-        console.error("이미지 로드 실패:", cardUrl);
-        alert("카드 이미지를 저장할 수 없습니다. 화면을 직접 캡처해 주세요.");
-        setIsSaving(false);
-      };
-
-      img.src = cardUrl;
-    } catch (error) {
-      console.error("이미지 저장 오류:", error);
-      alert("이미지 저장에 실패했습니다.");
-      setIsSaving(false);
-    }
-  };
+  // ... 기존 코드 생략 ...
 
   return (
     <div
       className="bg-white p-6 rounded-xl shadow-lg max-w-3xl w-full forest-card animate-fade-in"
       ref={fullResultRef}
     >
-      {/* 결과 헤더 - 기존 "테스트 결과" 대신 애니폴리 소개 문구 추가 */}
+      {/* 결과 헤더 */}
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
           당신이 뽑은 애니폴리는 '{result.name}'입니다!
@@ -587,8 +169,16 @@ function ResultPage() {
             </div>
           </div>
 
-          {/* 공유 버튼 영역 */}
+          {/* 버튼 영역 - 순서 변경 */}
           <div className="mt-4 flex space-x-2 justify-center">
+            <button
+              className="py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm forest-button"
+              onClick={restartTest}
+              disabled={isSaving}
+            >
+              다시 테스트하기
+            </button>
+
             <button
               className="py-2 px-4 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm forest-button"
               onClick={shareToKakao}
@@ -597,13 +187,12 @@ function ResultPage() {
               카카오톡 공유
             </button>
 
-            {/* 드롭다운 메뉴로 변경한 이미지 저장 버튼 */}
             <div className="relative inline-block">
               <button
                 id="saveButton"
                 className="py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm forest-button flex items-center"
                 onClick={(e) => {
-                  e.stopPropagation(); // 이벤트 전파 방지
+                  e.stopPropagation();
                   const saveOptions = document.getElementById("saveOptions");
                   if (saveOptions) {
                     saveOptions.classList.toggle("hidden");
@@ -633,13 +222,13 @@ function ResultPage() {
                 <div className="py-1">
                   <button
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => saveCardImageDirectly()} // 카드만 직접 저장 함수 사용
+                    onClick={() => saveCardImageDirectly()}
                   >
                     카드만 저장
                   </button>
                   <button
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => saveResultImage("full")} // 전체 결과는 기존 함수 사용
+                    onClick={() => saveResultImage("full")}
                   >
                     전체 결과 저장
                   </button>
@@ -752,20 +341,14 @@ function ResultPage() {
             </div>
           </div>
 
-          {/* 결과 하단 버튼 */}
-          <button
-            className="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg transition duration-200 font-medium forest-button"
-            onClick={restartTest}
-          >
-            다시 테스트하기
-          </button>
+          {/* 결과 하단 버튼 제거 - 위로 이동 */}
         </div>
       </div>
 
-      {/* 궁합 섹션 추가 */}
+      {/* 궁합 섹션 업데이트 */}
       <CompatibilitySection currentResult={result} allResults={results} />
 
-      {/* 다른 결과 유형 갤러리 추가 */}
+      {/* 다른 결과 유형 갤러리 유지 */}
       <ResultGallery allResults={results} currentResult={result} />
     </div>
   );

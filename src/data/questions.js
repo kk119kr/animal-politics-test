@@ -1,4 +1,6 @@
-// 테스트 질문 데이터 (15개 문항) - 7개 문항에 중간 선택지 추가
+// src/data/questions.js
+// 테스트 질문 데이터 (15개 문항) - 모든 중간 선택지(B) 벡터 수정
+
 export const questions = [
   {
     id: 1,
@@ -20,11 +22,11 @@ export const questions = [
         id: "B",
         text: "지도자가 약간 도움을 주되, 다람쥐와 여우들이 자연스럽게 거래하도록 놔두는 게 좋겠어요.",
         scores: {
-          reform: 0,
-          collectivism: 0,
-          pragmatism: 10,
-          authoritarianism: 0,
-          engagement: 5,
+          reform: -5,         // 수정 (0 → -5)
+          collectivism: 10,   // 수정 (0 → 10)
+          pragmatism: 15,     // 수정 (10 → 15)
+          authoritarianism: 5, // 수정 (0 → 5)
+          engagement: 0,      // 수정 (5 → 0)
         },
       },
       {
@@ -151,11 +153,11 @@ export const questions = [
         id: "B",
         text: "조심스럽게 사용하되, 햇빛과 바람의 힘을 이용하는 방법도 함께 연구해 대안을 마련해요.",
         scores: {
-          reform: 5,
-          collectivism: 5,
-          pragmatism: 5,
-          authoritarianism: 0,
-          engagement: 5,
+          reform: 15,          // 수정 (5 → 15)
+          collectivism: -10,   // 수정 (5 → -10)
+          pragmatism: 20,      // 수정 (5 → 20)
+          authoritarianism: -10, // 수정 (0 → -10)
+          engagement: 15,       // 수정 (5 → 15)
         },
       },
       {
@@ -205,7 +207,7 @@ export const questions = [
   {
     id: 7,
     question:
-      "올뺴미와 여우원숭이이들이 맛있는 사과나무를 두고 다투고 있어요. 어떻게 해결하면 좋을까요?",
+      "토끼와 다람쥐들이 맛있는 사과나무를 두고 다투고 있어요. 어떻게 해결하면 좋을까요?",
     options: [
       {
         id: "A",
@@ -220,7 +222,7 @@ export const questions = [
       },
       {
         id: "B",
-        text: "올빼미와 여우원숭이들이이 직접 만나서 이야기하고 서로 양보하며 해결책을 찾아야 해요.",
+        text: "토끼와 다람쥐가 직접 만나서 이야기하고 서로 양보하며 해결책을 찾아야 해요.",
         scores: {
           reform: 10,
           collectivism: -5,
@@ -251,11 +253,11 @@ export const questions = [
         id: "B",
         text: "비버들의 창의력을 존중하되, 물살이 동물들도 편안히 살 수 있도록 규칙이 필요해요.",
         scores: {
-          reform: 5,
-          collectivism: 0,
-          pragmatism: 10,
-          authoritarianism: 0,
-          engagement: 5,
+          reform: -10,         // 수정 (5 → -10)
+          collectivism: 20,    // 수정 (0 → 20)
+          pragmatism: 15,      // 수정 (10 → 15)
+          authoritarianism: 5, // 수정 (0 → 5)
+          engagement: 0,       // 수정 (5 → 0)
         },
       },
       {
@@ -350,11 +352,11 @@ export const questions = [
         id: "B",
         text: "일부 전통적인 역할은 인정하되, 모든 동물이 자신의 재능을 살릴 수 있는 기회가 필요해요.",
         scores: {
-          reform: 0,
-          collectivism: 5,
-          pragmatism: 5,
-          authoritarianism: 0,
-          engagement: 0,
+          reform: 5,           // 수정 (0 → 5)
+          collectivism: 15,    // 수정 (5 → 15)
+          pragmatism: -5,      // 수정 (5 → -5)
+          authoritarianism: -5, // 수정 (0 → -5)
+          engagement: 10,      // 수정 (0 → 10)
         },
       },
       {
@@ -391,11 +393,11 @@ export const questions = [
         id: "B",
         text: "다양한 동물 대표들이 함께 모여 균형 있게 소식을 전하되, 기본적인 규칙은 필요해요.",
         scores: {
-          reform: 0,
-          collectivism: 5,
-          pragmatism: 5,
-          authoritarianism: 0,
-          engagement: 5,
+          reform: -5,          // 수정 (0 → -5)
+          collectivism: 20,    // 수정 (5 → 20)
+          pragmatism: 10,      // 수정 (5 → 10)
+          authoritarianism: 5, // 수정 (0 → 5)
+          engagement: 0,       // 수정 (5 → 0)
         },
       },
       {
@@ -462,11 +464,11 @@ export const questions = [
         id: "B",
         text: "약초에 대해 잘 아는 토끼와 다람쥐들이 함께 식물을 돌보고 지속 가능한 방법을 찾아요.",
         scores: {
-          reform: 0,
-          collectivism: 5,
-          pragmatism: 10,
-          authoritarianism: 0,
-          engagement: 5,
+          reform: 10,          // 수정 (0 → 10)
+          collectivism: 15,    // 수정 (5 → 15)
+          pragmatism: -5,      // 수정 (10 → -5)
+          authoritarianism: -10, // 수정 (0 → -10)
+          engagement: 15,      // 수정 (5 → 15)
         },
       },
       {
@@ -503,11 +505,11 @@ export const questions = [
         id: "B",
         text: "두 동물의 지혜를 모두 배워서, 좋은 전통은 지키면서도 필요한 변화는 받아들여요.",
         scores: {
-          reform: 5,
-          collectivism: 0,
-          pragmatism: 5,
-          authoritarianism: 0,
-          engagement: 0,
+          reform: -5,          // 수정 (5 → -5)
+          collectivism: 15,    // 수정 (0 → 15)
+          pragmatism: 15,      // 수정 (5 → 15)
+          authoritarianism: 5, // 수정 (0 → 5)
+          engagement: 5,       // 수정 (0 → 5)
         },
       },
       {

@@ -1,5 +1,5 @@
 // src/utils/calculator.js
-// 테스트 결과 계산 알고리즘 - 중간 선택지 지원 및 밸런스 조정
+// 테스트 결과 계산 알고리즘 - 한국 사용자 패턴에 맞게 조정
 
 /**
  * 사용자 응답을 벡터로 변환하는 함수
@@ -50,10 +50,9 @@ export const calculateVectors = (answers, questions) => {
  * @returns {Object} - 정규화된 벡터값
  */
 export const normalizeVectors = (vectors) => {
-  // 최대 가능 점수 (중간 선택지를 고려하여 조정)
-  // 기존: 15문항 * 평균 점수 15점 = 약 225점
-  // 새로운 최대값: 중간 선택지의 더 낮은 점수를 고려
-  const maxPossibleScore = 200;
+  // 최대 가능 점수 (한국 응답 패턴 고려 조정)
+  // 대한민국 사용자들의 중간 선택지 선호 경향 반영
+  const maxPossibleScore = 180; // 약간 하향 조정
   
   const normalized = {};
   
@@ -152,6 +151,7 @@ export const calculateMagnitudeSimilarity = (v1, v2) => {
 
 /**
  * 가중치를 적용한 최종 점수 계산 함수
+ * 한국 사용자의 응답 패턴을 고려하여 조정
  * @param {Object} userVectors - 사용자 벡터
  * @param {Object} resultVectors - 결과 유형 벡터
  * @returns {number} - 가중치가 적용된 최종 점수
@@ -161,13 +161,46 @@ export const calculateWeightedScore = (userVectors, resultVectors) => {
   const cosineScore = (calculateCosineSimilarity(userVectors, resultVectors) + 1) / 2; // 0~1 범위로 변환
   const magnitudeScore = calculateMagnitudeSimilarity(userVectors, resultVectors);
   
-  // 가중치 조정 (중간 선택지를 고려하여 미세 조정)
-  // 거리: 65%, 코사인 유사도: 25%, 벡터 크기 유사도: 10%
-  return (distScore * 0.65) + (cosineScore * 0.25) + (magnitudeScore * 0.1);
+  // 가중치 조정 - 한국 사용자 응답 패턴 고려
+  // 방향성(코사인 유사도)의 중요도를 높이고 거리의 중요도는 약간 낮춤
+  return (distScore * 0.55) + (cosineScore * 0.40) + (magnitudeScore * 0.05);
+};
+
+/**
+ * 한국 사용자 특성을 고려한 유형별 보정 함수 (NEW)
+ * 특정 유형이 과도하게 나오는 현상 방지
+ * @param {Object} result - 결과 유형
+ * @param {Object} vectors - 사용자 벡터
+ * @returns {number} - 보정된 점수
+ */
+export const applyKoreanUserAdjustment = (result, vectors) => {
+  // 한국 사용자들에게 과도하게 나오는 유형에 대한 보정
+  const adjustmentFactors = {
+    // 카멜레온(R10) 유형에 대한 보정
+    "R10": 0.9,  // 점수를 10% 감소
+    
+    // 균형 조율자(R7) 유형에 대한 보정
+    "R7": 0.92,  // 점수를 8% 감소
+    
+    // 시장 신봉자(R2) 유형에 대한 보정 - 한국에서는 덜 나오게
+    "R2": 1.08,  // 점수를 8% 증가
+    
+    // 정의 수호자(R5) 유형에 대한 보정 - 한국에서는 더 나오게
+    "R5": 1.1,   // 점수를 10% 증가
+    
+    // 자유 추구자(R6) 유형에 대한 보정 - 더 희귀하게
+    "R6": 0.95   // 점수를 5% 감소
+  };
+  
+  // 기본값은 1 (보정 없음)
+  const factor = adjustmentFactors[result.id] || 1;
+  
+  return factor;
 };
 
 /**
  * 사용자 응답을 바탕으로 결과 유형 매칭
+ * 한국 사용자 패턴을 고려하여 조정됨
  * @param {Array} answers - 사용자 응답 배열
  * @param {Array} questions - 질문 데이터
  * @param {Array} results - 결과 유형 데이터
@@ -178,36 +211,60 @@ export const calculateResult = (answers, questions, results) => {
   const rawVectors = calculateVectors(answers, questions);
   const normalizedVectors = normalizeVectors(rawVectors);
   
-  // 각 결과 유형에 대한 점수 계산
-  const resultScores = results.map(result => ({
-    result,
-    score: calculateWeightedScore(normalizedVectors, result.vectors)
-  }));
+  // 각 결과 유형에 대한 점수 계산 (한국 사용자 보정 적용)
+  const resultScores = results.map(result => {
+    const rawScore = calculateWeightedScore(normalizedVectors, result.vectors);
+    const koreanAdjustment = applyKoreanUserAdjustment(result, normalizedVectors);
+    
+    return {
+      result,
+      score: rawScore * koreanAdjustment
+    };
+  });
   
   // 점수 기준 내림차순 정렬
   resultScores.sort((a, b) => b.score - a.score);
   
-  // 희귀도에 따른 조건 조정 (중간 선택지 도입으로 인해 기준 완화)
+  // 희귀도에 따른 조건 조정 (한국 사용자 패턴 고려)
   
-  // UR은 82% 이상의 유사도를 가져야 함 (기존 85%)
+  // UR은 75% 이상의 유사도를 가져야 함 (기준 완화)
   if (resultScores[0].result.rarity === 'UR' && 
-      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.82) {
+      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.75) {
     // UR 조건을 만족하지 못하면 다음 최고 점수로 대체
     return resultScores[1].result;
   }
   
-  // SR은 78% 이상의 유사도를 가져야 함 (기존 80%)
+  // SR은 72% 이상의 유사도를 가져야 함 (기준 완화)
   if (resultScores[0].result.rarity === 'SR' && 
-      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.78) {
+      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.72) {
     // SR 조건을 만족하지 못하면 다음 최고 점수로 대체
     return resultScores[1].result;
   }
   
-  // R은 70% 이상의 유사도를 가져야 함 (새로 추가된 조건)
+  // R은 65% 이상의 유사도를 가져야 함 (기준 완화)
   if (resultScores[0].result.rarity === 'R' && 
-      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.70) {
-    // R 조건을 만족하지 못하면 다음 최고 점수로 대체 (일반적으로 C)
+      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.65) {
+    // R 조건을 만족하지 못하면 다음 최고 점수로 대체
     return resultScores[1].result;
+  }
+  
+  // 카멜레온(R10)에 대한 추가 제한 조건
+  if (resultScores[0].result.id === 'R10') {
+    const cosine = calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors);
+    
+    // 카멜레온의 경우 더 높은 유사도 필요
+    if (cosine < 0.70) {
+      return resultScores[1].result;
+    }
+    
+    // 중간 선택지만 선택한 패턴 확인 (7개 이상 B 선택시)
+    let bCount = 0;
+    answers.forEach(a => { if (a === 'B') bCount++; });
+    
+    // 중간 선택지 과다 선택 시 두 번째 결과로 대체 (한국 사용자 특성 반영)
+    if (bCount >= 7) {
+      return resultScores[1].result;
+    }
   }
   
   // 가장 높은 점수의 결과 반환
@@ -221,5 +278,6 @@ export default {
   calculateCosineSimilarity,
   calculateMagnitudeSimilarity,
   calculateWeightedScore,
+  applyKoreanUserAdjustment,
   calculateResult
 };
