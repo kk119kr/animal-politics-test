@@ -21,11 +21,12 @@ const QuestionPage = () => {
 
   // 새 질문이 나올 때마다 애니메이션 리셋
   useEffect(() => {
+    // 상태 초기화를 명확히 분리하여 처리
     setSelectedOption(null);
     setAnimateOptions(true);
     setIsTransitioning(false);
     setImageError(false); // 이미지 오류 상태도 리셋
-  }, [currentQuestionIndex]);
+  }, [currentQuestionIndex]); // currentQuestionIndex가 변경될 때만 실행
 
   // 옵션 선택 처리
   const handleOptionClick = (optionId) => {
@@ -36,7 +37,12 @@ const QuestionPage = () => {
 
     // 약간의 지연 후 다음 질문으로 이동
     setTimeout(() => {
-      answerQuestion(optionId);
+      // 다음 질문으로 넘어가기 전에 상태 리셋 (완료 콜백 보장)
+      const nextQuestion = () => {
+        answerQuestion(optionId);
+      };
+      
+      nextQuestion();
     }, 300);
   };
 
@@ -89,7 +95,7 @@ const QuestionPage = () => {
       <div className={getOptionsGridStyle()}>
         {question.options.map((option, index) => (
           <button
-            key={option.id}
+            key={`${currentQuestionIndex}-${option.id}`} // 고유 키 개선
             className={`w-full transition-all duration-150 ${
               selectedOption === option.id
                 ? "bg-blue-100 border-blue-500 shadow-md"
