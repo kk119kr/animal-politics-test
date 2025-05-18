@@ -639,50 +639,42 @@ function ResultPage() {
 
           {/* 버튼 영역 - 순서 변경 */}
           <div className="mt-4 flex space-x-2 justify-center">
-            <button
-              className="py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm forest-button"
-              onClick={restartTest}
-              disabled={isSaving}
-            >
-              다시 테스트하기
-            </button>
+  <button
+    className="py-2 px-4 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm forest-button"
+    onClick={shareToKakao}
+    disabled={isSaving}
+  >
+    카카오톡 공유
+  </button>
 
-            <button
-              className="py-2 px-4 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm forest-button"
-              onClick={shareToKakao}
-              disabled={isSaving}
-            >
-              카카오톡 공유
-            </button>
-
-            <div className="relative inline-block">
-              <button
-                id="saveButton"
-                className="py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm forest-button flex items-center"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const saveOptions = document.getElementById("saveOptions");
-                  if (saveOptions) {
-                    saveOptions.classList.toggle("hidden");
-                  }
-                }}
-                disabled={isSaving}
-              >
-                {isSaving ? "저장 중..." : "이미지 저장"}
-                <svg
-                  className="w-4 h-4 ml-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
+  <div className="relative inline-block">
+    <button
+      id="saveButton"
+      className="py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm forest-button flex items-center"
+      onClick={(e) => {
+        e.stopPropagation();
+        const saveOptions = document.getElementById("saveOptions");
+        if (saveOptions) {
+          saveOptions.classList.toggle("hidden");
+        }
+      }}
+      disabled={isSaving}
+    >
+      {isSaving ? "저장 중..." : "이미지 저장"}
+      <svg
+        className="w-4 h-4 ml-1"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M19 9l-7 7-7-7"
+        />
+      </svg>
+    </button>
               <div
                 id="saveOptions"
                 className="hidden absolute z-10 mt-1 bg-white rounded-md shadow-lg w-full"
@@ -704,14 +696,14 @@ function ResultPage() {
               </div>
             </div>
 
-            <button
-              className="py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm forest-button"
-              onClick={copyToClipboard}
-              disabled={isSaving}
-            >
-              {copied ? "✓ 복사됨" : "URL 복사"}
-            </button>
-          </div>
+  <button
+    className="py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm forest-button"
+    onClick={copyToClipboard}
+    disabled={isSaving}
+  >
+    {copied ? "✓ 복사됨" : "URL 복사"}
+  </button>
+</div>
         </div>
 
         {/* 결과 상세 설명 섹션 */}
@@ -818,6 +810,16 @@ function ResultPage() {
 
       {/* 다른 결과 유형 갤러리 유지 */}
       <ResultGallery allResults={results} currentResult={result} />
+      {/* 하단 다시 테스트하기 버튼 - 크고 눈에 띄게 */}
+<div className="mt-8 text-center">
+  <button
+    className="py-4 px-8 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-lg font-semibold forest-button w-full sm:w-1/2 mx-auto shadow-lg transition-all duration-300 hover:shadow-xl"
+    onClick={restartTest}
+    disabled={isSaving}
+  >
+    다시 테스트하기
+  </button>
+</div>
     </div>
   );
 }
