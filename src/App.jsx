@@ -41,7 +41,7 @@ const AppContent = () => {
       <div className="fixed bottom-2 w-full text-center text-gray-400 text-xs">
         © 2025 정치성향테스트 | 제작: 송혁규, 유혜인
         <br />
-        문의: gurrb1@naver.com | 모든 콘텐츠 및 이미지의 권리는 제작자에게
+        문의: robehk@naver.com | 모든 콘텐츠 및 이미지의 권리는 제작자에게
         있습니다.
       </div>
     </div>
