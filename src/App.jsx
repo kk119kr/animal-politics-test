@@ -27,8 +27,7 @@ const AppContent = () => {
   }, [page, currentPage]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-indigo-50 to-purple-50 flex flex-col">
-      <div className="flex-grow flex items-center justify-center p-4 mb-16">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-indigo-50 to-purple-50 flex flex-col">      <div className="flex-grow flex items-center justify-center p-4">
         <div
           className={`transition-opacity duration-300 ${
             isTransitioning ? "opacity-0" : "opacity-100"
