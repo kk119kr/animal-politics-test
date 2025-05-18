@@ -37,27 +37,8 @@ const AppContent = () => {
         {currentPage === "result" && <ResultPage />}
       </div>
 
-      {/* 숲 배경 요소 (장식) - pointer-events-none 추가 */}
-      <div className="fixed bottom-0 left-0 w-full h-24 bg-green-900/10 z-0 pointer-events-none"></div>
-      <div className="fixed bottom-0 left-0 w-full h-16 bg-green-800/10 z-0 pointer-events-none"></div>
-      <div className="fixed bottom-0 left-0 w-full h-8 bg-green-700/10 z-0 pointer-events-none"></div>
-
-      {/* 숲 데코레이션 요소 - pointer-events-none 추가 */}
-      <div className="fixed top-10 left-10 text-5xl opacity-20 z-0 pointer-events-none">
-        🌳
-      </div>
-      <div className="fixed top-40 right-20 text-5xl opacity-10 z-0 pointer-events-none">
-        🌲
-      </div>
-      <div className="fixed bottom-20 left-40 text-5xl opacity-15 z-0 pointer-events-none">
-        🌿
-      </div>
-      <div className="fixed bottom-40 right-10 text-5xl opacity-10 z-0 pointer-events-none">
-        🍃
-      </div>
-
-      {/* 푸터 - pointer-events-none 추가 */}
-      <div className="fixed bottom-2 w-full text-center text-gray-400 text-xs pointer-events-none">
+      {/* 푸터 */}
+      <div className="fixed bottom-2 w-full text-center text-gray-400 text-xs">
         © 2025 정치성향테스트 | 제작: 송혁규, 유혜인
         <br />
         문의: gurrb1@naver.com | 모든 콘텐츠 및 이미지의 권리는 제작자에게
