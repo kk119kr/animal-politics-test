@@ -1,31 +1,31 @@
 // src/data/questions.js
-// 테스트 질문 데이터 (15개 문항)
+// 테스트 질문 데이터 (15개 문항) - 7개 문항 변경 적용 (간결한 버전)
 export const questions = [
   {
     id: 1,
     question:
-      "꿀벌들이 모은 꿀 저장고가 넘치고 있습니다. 이 풍부한 자원을 어떻게 관리해야 할까요?",
+      "숲속 주택 가격이 급등하여 많은 동물들이 집을 구하기 어려워졌습니다.",
     options: [
       {
         id: "A",
-        text: "모든 동물이 필요한 만큼 자유롭게 가져갈 수 있도록 개방합니다. 자연은 모두의 것이니까요.",
+        text: "정부가 적극 개입하여 주택 공급을 늘리고 가격을 규제해야 합니다.",
         scores: {
-          reform: 15,
+          reform: 10,
           collectivism: 20,
-          pragmatism: -15,
-          authoritarianism: -10,
-          engagement: 5,
+          pragmatism: 5,
+          authoritarianism: 15,
+          engagement: 10,
         },
       },
       {
         id: "B",
-        text: "꿀을 모은 꿀벌들이 관리하고, 다른 동물들은 작업이나 거래를 통해 얻을 수 있게 합니다.",
+        text: "시장 원리에 맡기고 규제를 완화해야 합니다. 정부 개입은 시장을 왜곡합니다.",
         scores: {
-          reform: -15,
+          reform: -5,
           collectivism: -20,
           pragmatism: 15,
-          authoritarianism: 10,
-          engagement: -5,
+          authoritarianism: -10,
+          engagement: 0,
         },
       },
     ],
@@ -124,26 +124,26 @@ export const questions = [
   {
     id: 5,
     question:
-      "산에서 내려오는 물줄기를 변경해 건조한 지역에 물을 공급하자는 제안이 있습니다.",
+      "숲속에서 강력하지만 위험성 있는 '불의 돌' 에너지 사용에 대한 논란이 일고 있습니다.",
     options: [
       {
         id: "A",
-        text: "자연의 순리를 존중해야 합니다. 인위적인 변경은 예상치 못한 문제를 일으킬 수 있어요.",
+        text: "'불의 돌'을 계속 사용하되, 안전 기술을 강화하고 점진적으로 대안을 찾아야 합니다.",
         scores: {
-          reform: -15,
-          collectivism: 5,
-          pragmatism: -10,
-          authoritarianism: 5,
-          engagement: -10,
+          reform: -10,
+          collectivism: 0,
+          pragmatism: 15,
+          authoritarianism: 10,
+          engagement: 0,
         },
       },
       {
         id: "B",
-        text: "기술과 지식을 활용해 환경을 개선해야 합니다. 모두에게 혜택이 돌아갈 거예요.",
+        text: "'불의 돌'을 즉시 중단하고 햇빛과 바람 같은 자연 친화적 에너지로 전환해야 합니다.",
         scores: {
-          reform: 15,
-          collectivism: 0,
-          pragmatism: 15,
+          reform: 20,
+          collectivism: 10,
+          pragmatism: -5,
           authoritarianism: -5,
           engagement: 15,
         },
@@ -154,28 +154,28 @@ export const questions = [
   {
     id: 6,
     question:
-      "매년 열리는 열매 축제에서 일부 동물들이 전통 방식을 바꾸자고 제안했습니다.",
+      "숲속에서 나이 들거나 아픈 동물들을 어떻게 돌볼지 논의 중입니다.",
     options: [
       {
         id: "A",
-        text: "오랜 세월 지켜온 전통은 존중되어야 합니다. 변화는 신중하게 검토한 후에 결정해야 해요.",
+        text: "모든 동물이 더 많은 열매를 공동 창고에 기부하여 포괄적 돌봄 체계를 만들어야 합니다.",
         scores: {
-          reform: -20,
-          collectivism: 10,
-          pragmatism: -5,
-          authoritarianism: 10,
-          engagement: -5,
+          reform: 5,
+          collectivism: 20,
+          pragmatism: 0,
+          authoritarianism: 5,
+          engagement: 10,
         },
       },
       {
         id: "B",
-        text: "시대에 맞게 축제도 변화해야 합니다. 새로운 아이디어로 모두가 더 즐거운 축제를 만들어요.",
+        text: "개인과 가족이 자신의 미래를 책임지고, 공동체는 최소한의 지원만 제공해야 합니다.",
         scores: {
-          reform: 20,
-          collectivism: -5,
-          pragmatism: 5,
-          authoritarianism: -10,
-          engagement: 10,
+          reform: -5,
+          collectivism: -20,
+          pragmatism: 10,
+          authoritarianism: -5,
+          engagement: -5,
         },
       },
     ],
@@ -213,28 +213,28 @@ export const questions = [
   },
   {
     id: 8,
-    question: "일부 동물들이 다니는 숲 길이 위험하다는 보고가 있습니다.",
+    question: "숲속의 큰 기업들이 성장하면서 그 영향력에 대한 우려가 커지고 있습니다.",
     options: [
       {
         id: "A",
-        text: "안전을 위해 위험한 길은 폐쇄하고, 모든 동물이 안전한 길만 이용하도록 규제해야 합니다.",
+        text: "기업의 자유로운 활동과 혁신을 장려해야 합니다. 과도한 규제는 발전을 저해합니다.",
         scores: {
-          reform: -10,
-          collectivism: 15,
-          pragmatism: 5,
-          authoritarianism: 15,
-          engagement: 10,
+          reform: -5,
+          collectivism: -20,
+          pragmatism: 15,
+          authoritarianism: -10,
+          engagement: 0,
         },
       },
       {
         id: "B",
-        text: "위험을 알리는 표지만 세우고, 각자 판단에 맡겨야 합니다. 모든 선택에는 책임이 따르니까요.",
+        text: "대기업 규제를 강화하고 경제력 집중을 막아야 합니다. 공정한 시장 질서가 중요합니다.",
         scores: {
-          reform: 5,
-          collectivism: -15,
-          pragmatism: 0,
-          authoritarianism: -20,
-          engagement: -5,
+          reform: 10,
+          collectivism: 15,
+          pragmatism: 5,
+          authoritarianism: 10,
+          engagement: 10,
         },
       },
     ],
@@ -301,28 +301,28 @@ export const questions = [
   },
   {
     id: 11,
-    question: "한 이야기꾼이 숲의 지도자를 비판하는 이야기를 하고 있습니다.",
+    question: "숲속에서 성별에 따른 기회와 대우에 차이가 있다는 주장이 제기되었습니다.",
     options: [
       {
         id: "A",
-        text: "숲의 화합을 위해 지나친 비판은 자제해야 합니다. 이야기도 책임감 있게 해야 해요.",
+        text: "생물학적 차이와 전통적 역할을 존중해야 합니다. 지나친 평등은 혼란을 가져옵니다.",
         scores: {
-          reform: -10,
-          collectivism: 10,
-          pragmatism: 5,
+          reform: -20,
+          collectivism: 0,
+          pragmatism: 10,
           authoritarianism: 15,
-          engagement: -15,
+          engagement: -10,
         },
       },
       {
         id: "B",
-        text: "모든 동물은 자유롭게 의견을 표현할 권리가 있습니다. 다양한 목소리가 숲을 건강하게 만들어요.",
+        text: "성별에 따른 차별을 해소하고 모든 동물에게 동등한 기회를 보장해야 합니다.",
         scores: {
-          reform: 15,
-          collectivism: -5,
-          pragmatism: -5,
-          authoritarianism: -20,
-          engagement: 10,
+          reform: 20,
+          collectivism: 10,
+          pragmatism: 0,
+          authoritarianism: -15,
+          engagement: 15,
         },
       },
     ],
@@ -331,28 +331,28 @@ export const questions = [
   {
     id: 12,
     question:
-      "어린 다람쥐들이 전통적인 도토리 수집법 대신 새로운 방법을 배우고 싶어합니다.",
+      "숲속 학교에서 어린 동물들의 교육 방식에 대한 논쟁이 일고 있습니다.",
     options: [
       {
         id: "A",
-        text: "선조들의 지혜가 담긴 전통적인 방법을 먼저 배워야 합니다. 기본기가 중요해요.",
+        text: "공정한 경쟁과 실력 평가 중심의 교육이 중요합니다. 수월성이 우선입니다.",
         scores: {
           reform: -15,
-          collectivism: 5,
-          pragmatism: 0,
-          authoritarianism: 15,
-          engagement: -10,
+          collectivism: -15,
+          pragmatism: 10,
+          authoritarianism: 10,
+          engagement: 0,
         },
       },
       {
         id: "B",
-        text: "새로운 시도를 격려하고 지원해야 합니다. 혁신은 젊은 세대의 창의력에서 시작돼요.",
+        text: "협력과 창의성 중심의 평등한 교육 환경이 중요합니다. 개인의 성장이 우선입니다.",
         scores: {
           reform: 15,
-          collectivism: 0,
-          pragmatism: 5,
-          authoritarianism: -15,
-          engagement: 15,
+          collectivism: 15,
+          pragmatism: -5,
+          authoritarianism: -10,
+          engagement: 10,
         },
       },
     ],
@@ -421,11 +421,11 @@ export const questions = [
   {
     id: 15,
     question:
-      "오랜 세월 숲을 지켜온 현명한 거북이가 '변화하는 시대에 대비해야 한다'고 조언했습니다.",
+      "숲의 미래 방향에 대해 거북이와 카멜레온이 서로 다른 조언을 했습니다.",
     options: [
       {
         id: "A",
-        text: "선조들의 지혜와 전통을 지키며 신중하게 적응해 나가야 합니다. 급격한 변화는 위험해요.",
+        text: "거북이처럼 전통과 안정을 지키며 변화에 신중하게 대응해야 합니다.",
         scores: {
           reform: -15,
           collectivism: 5,
@@ -436,7 +436,7 @@ export const questions = [
       },
       {
         id: "B",
-        text: "미래를 위해 과감하게 새로운 시도를 해야 합니다. 변화를 두려워하면 발전할 수 없어요.",
+        text: "카멜레온처럼 환경에 적응하며 새로운 변화를 적극적으로 받아들여야 합니다.",
         scores: {
           reform: 20,
           collectivism: 0,
