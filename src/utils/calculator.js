@@ -167,29 +167,27 @@ export const calculateWeightedScore = (userVectors, resultVectors) => {
 };
 
 /**
- * 한국 사용자 특성을 고려한 유형별 보정 함수 (NEW)
+ * 한국 사용자 특성을 고려한 유형별 보정 함수 (변경됨)
  * 특정 유형이 과도하게 나오는 현상 방지
  * @param {Object} result - 결과 유형
  * @param {Object} vectors - 사용자 벡터
  * @returns {number} - 보정된 점수
  */
 export const applyKoreanUserAdjustment = (result, vectors) => {
-  // 한국 사용자들에게 과도하게 나오는 유형에 대한 보정
+  // 변경된 보정값: 비버/청룡/여우원숭이 감소, 다른 유형들 증가
   const adjustmentFactors = {
-    // 카멜레온(R10) 유형에 대한 보정
-    "R10": 0.9,  // 점수를 10% 감소
+    "R9": 0.8,   // 비버(공동체 건설자) 점수를 20% 감소 (기존에 없던 보정)
+    "R5": 0.9,   // 청룡(정의 수호자) 점수를 10% 감소 (기존 1.1에서 변경)
+    "R7": 0.85,  // 여우원숭이(균형 조율자) 점수를 15% 감소 (기존 0.92에서 더 감소)
     
-    // 균형 조율자(R7) 유형에 대한 보정
-    "R7": 0.92,  // 점수를 8% 감소
-    
-    // 시장 신봉자(R2) 유형에 대한 보정 - 한국에서는 덜 나오게
-    "R2": 1.08,  // 점수를 8% 증가
-    
-    // 정의 수호자(R5) 유형에 대한 보정 - 한국에서는 더 나오게
-    "R5": 1.1,   // 점수를 10% 증가
-    
-    // 자유 추구자(R6) 유형에 대한 보정 - 더 희귀하게
-    "R6": 0.95   // 점수를 5% 감소
+    // 다른 유형들은 점수 증가
+    "R1": 1.1,   // 황금독수리(원칙 수호자) 점수 10% 증가
+    "R4": 1.15,  // 불사조(열정 혁신가) 점수 15% 증가
+    "R6": 1.2,   // 페가수스(자유 추구자) 점수 20% 증가
+    "R3": 1.15,  // 천년거북(전통 수호자) 점수 15% 증가
+    "R8": 1.12,  // 올빼미(지식 탐구자) 점수 12% 증가
+    "R10": 1.05, // 카멜레온(유연한 혁신가) 점수 5% 증가 (기존 0.9에서 변경)
+    "R2": 1.1    // 은여우(시장 신봉자) 점수 10% 증가 (기존 1.08에서 약간 증가)
   };
   
   // 기본값은 1 (보정 없음)
@@ -248,21 +246,20 @@ export const calculateResult = (answers, questions, results) => {
     return resultScores[1].result;
   }
   
-  // 카멜레온(R10)에 대한 추가 제한 조건
+  // 카멜레온(R10)에 대한 추가 제한 조건 (변경됨)
   if (resultScores[0].result.id === 'R10') {
     const cosine = calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors);
     
-    // 카멜레온의 경우 더 높은 유사도 필요
-    if (cosine < 0.70) {
+    // 카멜레온의 경우 유사도 요구치 완화 (0.70 → 0.60)
+    if (cosine < 0.60) {
       return resultScores[1].result;
     }
     
-    // 중간 선택지만 선택한 패턴 확인 (7개 이상 B 선택시)
+    // 중간 선택지 과다 선택 시 제한 완화 (7 → 10)
     let bCount = 0;
     answers.forEach(a => { if (a === 'B') bCount++; });
     
-    // 중간 선택지 과다 선택 시 두 번째 결과로 대체 (한국 사용자 특성 반영)
-    if (bCount >= 7) {
+    if (bCount >= 10) {
       return resultScores[1].result;
     }
   }
