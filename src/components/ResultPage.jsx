@@ -4,7 +4,70 @@ import { useTest } from "../contexts/TestContext";
 import { useEffect, useRef, useState } from "react";
 import results from "../data/results";
 
-// ... 기존 코드 생략 ...
+// 벡터 온도계 컴포넌트
+const VectorThermometer = ({ label, value, description }) => {
+  const percent = (value + 100) / 2;
+  let color = "bg-gray-400";
+  if (value > 50) color = "bg-red-500";
+  else if (value > 0) color = "bg-orange-400";
+  else if (value > -50) color = "bg-blue-400";
+  else color = "bg-blue-600";
+
+  const [width, setWidth] = useState(0);
+
+  // 애니메이션 효과를 위한 useEffect
+  useEffect(() => {
+    // 약간의 지연 후 너비 설정
+    const timer = setTimeout(() => {
+      setWidth(percent);
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [percent]);
+
+  return (
+    <div className="mb-4">
+      <div className="flex justify-between mb-1">
+        <span className="text-sm font-medium text-gray-700">{label}</span>
+        <span className="text-sm font-medium text-gray-700">{value}</span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+        <div
+          className={`${color} h-3 rounded-full transition-all duration-1000 vector-thermometer`}
+          style={{ width: `${width}%` }}
+        ></div>
+      </div>
+      <p className="text-xs text-gray-500 mt-1">{description}</p>
+    </div>
+  );
+};
+
+// 탭 컴포넌트
+const ResultTabs = ({ activeTab, setActiveTab, tabs }) => {
+  return (
+    <div className="flex border-b border-gray-200 mb-4">
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          className={`py-2 px-4 text-sm font-medium transition-colors duration-200 relative 
+            ${
+              activeTab === tab.id
+                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            }`}
+          onClick={() => setActiveTab(tab.id)}
+        >
+          {tab.label}
+          {activeTab !== tab.id && (
+            <span className="absolute inset-0 bg-gray-100 opacity-0 hover:opacity-10 transition-opacity duration-200"></span>
+          )}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+
+
 
 // 수정된 CompatibilitySection 컴포넌트
 const CompatibilitySection = ({ currentResult, allResults }) => {
