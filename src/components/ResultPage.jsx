@@ -820,6 +820,10 @@ function ResultPage() {
     다시 테스트하기
   </button>
 </div>
+      {/* 한 개의 광고만 원하시면 이 부분은 제거하세요 */}
+      <div className="mt-8">
+        <AdComponent slot="9876543210" /> {/* 실제 AdSense에서 제공한 슬롯 ID로 변경하세요 */}
+      </div>
     </div>
   );
 }
