@@ -43,7 +43,7 @@ const AppContent = () => {
 
       {/* 푸터 - fixed 대신 static 위치로 변경 */}
       <div className="w-full py-3 bg-white bg-opacity-70 text-center text-gray-400 text-xs mt-auto">
-        © 2025 정치성향테스트 | 제작: 송혁규, 유혜인
+        © 2025 정치성향테스트 |
         <br />
         문의: robehk@naver.com | 모든 콘텐츠 및 이미지의 권리는 제작자에게
         있습니다.
