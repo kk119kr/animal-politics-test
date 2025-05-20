@@ -369,12 +369,32 @@ function ResultPage() {
         dropdown.classList.add("hidden");
       }
     }
+    
 
     // 이벤트 리스너 추가
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       // 컴포넌트 언마운트 시 이벤트 리스너 제거
       document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+    useEffect(() => {
+    // 결과 페이지에서 광고 활성화
+    if (window.adsbygoogle) {
+      try {
+        // 자동 광고 활성화
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (e) {
+        console.error('AdSense error:', e);
+      }
+    }
+    
+    // 컴포넌트가 언마운트될 때 정리
+    return () => {
+      // 다른 페이지로 이동할 때 광고 요청 일시 중지 (선택사항)
+      // if (window.adsbygoogle) {
+      //   (window.adsbygoogle = window.adsbygoogle || []).pauseAdRequests = 1;
+      // }
     };
   }, []);
 
@@ -820,10 +840,6 @@ function ResultPage() {
     다시 테스트하기
   </button>
 </div>
-      {/* 한 개의 광고만 원하시면 이 부분은 제거하세요 */}
-      <div className="mt-8">
-        <AdComponent slot="9876543210" /> {/* 실제 AdSense에서 제공한 슬롯 ID로 변경하세요 */}
-      </div>
     </div>
   );
 }

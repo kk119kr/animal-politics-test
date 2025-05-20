@@ -44,6 +44,20 @@ function StartPage() {
       </div>
     </div>
   );
+  useEffect(() => {
+    // 시작 페이지에서 광고 비활성화
+    if (window.adsbygoogle) {
+      (window.adsbygoogle = window.adsbygoogle || []).pauseAdRequests = 1;
+    }
+    
+    // 컴포넌트가 언마운트될 때 정리
+    return () => {
+      // 페이지를 떠날 때 광고 요청 재개 (선택사항)
+      // if (window.adsbygoogle) {
+      //   (window.adsbygoogle = window.adsbygoogle || []).pauseAdRequests = 0;
+      // }
+    };
+  }, []);
 }
 
 export default StartPage;
