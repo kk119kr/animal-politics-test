@@ -580,11 +580,25 @@ function ResultPage() {
     }
   };
 
-  return (
+return (
     <div
       className="bg-white p-6 rounded-xl shadow-lg max-w-3xl w-full forest-card animate-fade-in"
       ref={fullResultRef}
     >
+      {/* 카카오 광고 영역 - 결과 카드 상단에 추가 */}
+      <div className="mb-6 text-center">
+        <div dangerouslySetInnerHTML={{
+          __html: `
+            <ins class="kakao_ad_area" style="display:none;"
+              data-ad-unit="DAN-GhVfyT9ccl0nsDOW"
+              data-ad-width="320"
+              data-ad-height="100">
+            </ins>
+            <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+          `
+        }} />
+      </div>
+    
       {/* 결과 헤더 */}
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
