@@ -446,26 +446,25 @@ function ResultPage() {
     });
   };
   
-  // 갤러리에서 다른 결과 선택 시 핸들러 추가
-  const handleSelectResult = (selectedResult) => {
-    // 현재 결과와 동일하면 무시
-    if (selectedResult.id === result.id) return;
-    
-    // 선택한 결과로 상태 업데이트
-    setResult(selectedResult);
-    
-    // URL 파라미터 업데이트 (히스토리 상태 변경)
-    const url = new URL(window.location);
-    url.searchParams.set('result', selectedResult.id);
-    window.history.pushState({}, '', url);
-    
-    // 페이지 최상단으로 스크롤
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    // 이전 선택 정보를 상태에 저장 (필요시)
-    // setSelectedVectors(selectedResult.vectors);
-  };
-
+  // selectResult 함수 수정
+const handleSelectResult = (selectedResult) => {
+  // 현재 결과와 동일하면 무시
+  if (selectedResult.id === result.id) return;
+  
+  // 선택한 결과로 상태 업데이트
+  setResult(selectedResult);
+  
+  // 선택한 결과의 벡터값으로 업데이트 (이 부분이 누락됨)
+  setSelectedVectors(selectedResult.vectors);
+  
+  // URL 파라미터 업데이트 (히스토리 상태 변경)
+  const url = new URL(window.location);
+  url.searchParams.set('result', selectedResult.id);
+  window.history.pushState({}, '', url);
+  
+  // 페이지 최상단으로 스크롤
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
   // 카카오톡 공유 함수 개선 버전
 const shareToKakao = () => {
   if (window.Kakao && window.Kakao.Share) {
@@ -831,35 +830,35 @@ data-ad-height = "100"></ins>
           <h3 className="font-bold text-lg mb-4">당신의 정치 성향 벡터</h3>
 
           {/* 벡터 온도계 */}
-          {userVectors && (
-            <div className="mb-6">
-              <VectorThermometer
-                label="개혁성"
-                value={userVectors.reform}
-                description="변화와 혁신을 추구하는 정도"
-              />
-              <VectorThermometer
-                label="공동체성"
-                value={userVectors.collectivism}
-                description="개인보다 집단의 이익을 중시하는 정도"
-              />
-              <VectorThermometer
-                label="현실주의"
-                value={userVectors.pragmatism}
-                description="이상보다 실용적 결과를 중요시하는 정도"
-              />
-              <VectorThermometer
-                label="권위주의"
-                value={userVectors.authoritarianism}
-                description="강한 지도력과 질서를 선호하는 정도"
-              />
-              <VectorThermometer
-                label="대응성"
-                value={userVectors.engagement}
-                description="적극적으로 문제에 대응하는 정도"
-              />
-            </div>
-          )}
+{selectedVectors && (
+  <div className="mb-6">
+    <VectorThermometer
+      label="개혁성"
+      value={selectedVectors.reform}
+      description="변화와 혁신을 추구하는 정도"
+    />
+    <VectorThermometer
+      label="공동체성"
+      value={selectedVectors.collectivism}
+      description="개인보다 집단의 이익을 중시하는 정도"
+    />
+    <VectorThermometer
+      label="현실주의"
+      value={selectedVectors.pragmatism}
+      description="이상보다 실용적 결과를 중요시하는 정도"
+    />
+    <VectorThermometer
+      label="권위주의"
+      value={selectedVectors.authoritarianism}
+      description="강한 지도력과 질서를 선호하는 정도"
+    />
+    <VectorThermometer
+      label="대응성"
+      value={selectedVectors.engagement}
+      description="적극적으로 문제에 대응하는 정도"
+    />
+  </div>
+)}
 
           {/* 탭 메뉴 */}
           <div className="mt-4 bg-gray-50 rounded-lg p-2">
@@ -929,13 +928,11 @@ data-ad-height = "100"></ins>
       <CompatibilitySection currentResult={result} allResults={results} />
 
       {/* 다른 결과 유형 갤러리 유지 */}
-      <ResultGallery allResults={results} currentResult={result} />
-      {/* 갤러리 컴포넌트에 onSelectResult 전달 */}
       <ResultGallery 
-        allResults={results} 
-        currentResult={result} 
-        onSelectResult={handleSelectResult}
-      />
+  allResults={results} 
+  currentResult={result} 
+  onSelectResult={handleSelectResult}
+/>
       
       {/* 하단 다시 테스트하기 버튼 - 크고 눈에 띄게 */}
 <div className="mt-8 text-center">
