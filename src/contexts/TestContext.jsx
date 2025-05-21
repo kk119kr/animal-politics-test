@@ -50,6 +50,30 @@ export const TestProvider = ({ children }) => {
     }
   }, []); // 컴포넌트 마운트 시 한 번만 실행
 
+  // URL 해시 변경 감지 이벤트
+  useEffect(() => {
+    const handleHashChange = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const resultId = urlParams.get("result");
+      
+      if (resultId && page === "result") {
+        const matchedResult = results.find((r) => r.id === resultId);
+        if (matchedResult) {
+          // 결과만 업데이트 (페이지는 이미 result임)
+          setResult(matchedResult);
+        }
+      }
+    };
+    
+    // 이벤트 리스너 등록
+    window.addEventListener('popstate', handleHashChange);
+    
+    // 컴포넌트 언마운트 시 정리
+    return () => {
+      window.removeEventListener('popstate', handleHashChange);
+    };
+  }, [page]);
+
   // 테스트 시작 함수
   const startTest = () => {
     setPage("question");
@@ -57,6 +81,11 @@ export const TestProvider = ({ children }) => {
     setAnswers([]);
     setResult(null);
     setUserVectors(null);
+    
+    // URL 파라미터 제거
+    const url = new URL(window.location);
+    url.search = '';
+    window.history.pushState({}, '', url);
   };
 
   // 질문에 응답하는 함수
@@ -84,9 +113,27 @@ export const TestProvider = ({ children }) => {
     // 결과 계산
     const matchedResult = calculateResult(answersArray, questions, results);
     setResult(matchedResult);
+    
+    // URL에 결과 ID 추가
+    const url = new URL(window.location);
+    url.searchParams.set('result', matchedResult.id);
+    window.history.pushState({}, '', url);
 
     // 결과 페이지로 이동
     setPage("result");
+  };
+
+  // 다른 결과 선택 함수
+  const selectResult = (newResult) => {
+    if (!newResult) return;
+    
+    // 결과 업데이트
+    setResult(newResult);
+    
+    // URL 파라미터 업데이트
+    const url = new URL(window.location);
+    url.searchParams.set('result', newResult.id);
+    window.history.pushState({}, '', url);
   };
 
   // 다시 테스트하기 함수
@@ -98,6 +145,11 @@ export const TestProvider = ({ children }) => {
     setAnswers([]);
     setResult(null);
     setUserVectors(null);
+    
+    // URL 파라미터 제거
+    const url = new URL(window.location);
+    url.search = '';
+    window.history.pushState({}, '', url);
   };
 
   // 현재 질문 가져오기
@@ -119,6 +171,7 @@ export const TestProvider = ({ children }) => {
     restartTest,
     questions,
     answers,
+    selectResult, // 새로운 함수 추가
   };
 
   return <TestContext.Provider value={value}>{children}</TestContext.Provider>;

@@ -170,7 +170,7 @@ const CompatibilitySection = ({ currentResult, allResults }) => {
 };
 
 // 다른 결과 유형 갤러리 컴포넌트
-const ResultGallery = ({ allResults, currentResult }) => {
+const ResultGallery = ({ allResults, currentResult, onSelectResult }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const resultsByRarity = {
@@ -215,7 +215,7 @@ const ResultGallery = ({ allResults, currentResult }) => {
         <div className="mt-3 bg-gray-50 rounded-lg p-4 animate-fade-in">
           <p className="text-sm text-gray-600 mb-4">
             숲속에는 다양한 정치 성향의 동물들이 살고 있습니다. 각 유형을
-            클릭하면 더 자세한 내용을 볼 수 있습니다.
+            클릭하면 해당 유형의 결과 페이지를 볼 수 있습니다.
           </p>
 
           {Object.keys(resultsByRarity).map(
@@ -246,9 +246,7 @@ const ResultGallery = ({ allResults, currentResult }) => {
                             ? "ring-2 ring-blue-500 ring-offset-2"
                             : ""
                         }`}
-                        onClick={() =>
-                          window.open(`/gallery/${result.id}`, "_blank")
-                        }
+                        onClick={() => onSelectResult(result)}
                       >
                         <img
                           src={`/images/${result.id}.png`}
@@ -317,12 +315,27 @@ const getPartyPreference = (resultId) => {
 
 // 주요 컴포넌트
 function ResultPage() {
-  const { result, userVectors, restartTest } = useTest();
+  const { result: initialResult, userVectors, restartTest } = useTest();
   const [activeTab, setActiveTab] = useState("traits");
   const [copied, setCopied] = useState(false);
   const resultCardRef = useRef(null);
   const fullResultRef = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
+  
+  // 현재 선택된 결과 상태 추가
+  const [result, setResult] = useState(initialResult);
+  // 이전 선택한 결과의 벡터 저장
+  const [selectedVectors, setSelectedVectors] = useState(userVectors);
+  
+  // 결과가 변경될 때 상태 업데이트
+  useEffect(() => {
+    if (initialResult && !result) {
+      setResult(initialResult);
+    }
+    if (userVectors && !selectedVectors) {
+      setSelectedVectors(userVectors);
+    }
+  }, [initialResult, userVectors]);
   
   // 해당 결과의 정치적 성향 가져오기
   const politicalOrientation = getPoliticalOrientation(result?.id);
@@ -370,7 +383,6 @@ function ResultPage() {
       }
     }
     
-
     // 이벤트 리스너 추가
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -378,7 +390,8 @@ function ResultPage() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-    useEffect(() => {
+  
+  useEffect(() => {
     // 결과 페이지에서 광고 활성화
     if (window.adsbygoogle) {
       try {
@@ -397,15 +410,6 @@ function ResultPage() {
       // }
     };
   }, []);
-
-  // 탭 정의
-  const tabs = [
-    { id: "traits", label: "행동 특성" },
-    { id: "media", label: "선호 미디어" },
-    { id: "strengths", label: "장점" },
-    { id: "challenges", label: "도전점" },
-    { id: "party", label: "선호 정당 특징" }, // 새로운 탭 추가
-  ];
 
   // 결과가 없으면 로딩 표시
   if (!result) {
@@ -427,6 +431,26 @@ function ResultPage() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
+  };
+  
+  // 갤러리에서 다른 결과 선택 시 핸들러 추가
+  const handleSelectResult = (selectedResult) => {
+    // 현재 결과와 동일하면 무시
+    if (selectedResult.id === result.id) return;
+    
+    // 선택한 결과로 상태 업데이트
+    setResult(selectedResult);
+    
+    // URL 파라미터 업데이트 (히스토리 상태 변경)
+    const url = new URL(window.location);
+    url.searchParams.set('result', selectedResult.id);
+    window.history.pushState({}, '', url);
+    
+    // 페이지 최상단으로 스크롤
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // 이전 선택 정보를 상태에 저장 (필요시)
+    // setSelectedVectors(selectedResult.vectors);
   };
 
   // 카카오톡 공유 함수 추가
@@ -627,6 +651,18 @@ data-ad-height = "100"></ins>
           당신의 정치적 성향은 <span className="font-semibold">{politicalOrientation}</span>에 가깝습니다.
         </p>
         <div className="italic text-gray-500 mt-1 text-sm">"{result.quote}"</div>
+        {/* 다른 결과 보기 모드 표시 */}
+        {result !== initialResult && (
+          <div className="mt-3 bg-yellow-100 px-3 py-2 rounded-lg text-sm text-yellow-700 inline-block">
+            다른 유형 탐색 중 - 
+            <button 
+              onClick={() => setResult(initialResult)}
+              className="ml-1 underline font-medium hover:text-yellow-800"
+            >
+              내 결과로 돌아가기
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="md:flex gap-6">
@@ -843,6 +879,13 @@ data-ad-height = "100"></ins>
 
       {/* 다른 결과 유형 갤러리 유지 */}
       <ResultGallery allResults={results} currentResult={result} />
+      {/* 갤러리 컴포넌트에 onSelectResult 전달 */}
+      <ResultGallery 
+        allResults={results} 
+        currentResult={result} 
+        onSelectResult={handleSelectResult}
+      />
+      
       {/* 하단 다시 테스트하기 버튼 - 크고 눈에 띄게 */}
 <div className="mt-8 text-center">
   <button
