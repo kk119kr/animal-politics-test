@@ -465,7 +465,7 @@ const handleSelectResult = (selectedResult) => {
   // 페이지 최상단으로 스크롤
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
-  // 카카오톡 공유 함수 개선 버전
+  // 카카오톡 공유 함수 개선 버전 - 문제의 함수
 const shareToKakao = () => {
   if (window.Kakao && window.Kakao.Share) {
     try {
@@ -529,130 +529,130 @@ const shareToKakao = () => {
   }
 };
 
-  // 개선된 이미지 저장 함수
-  const saveResultImage = async (type) => {
-    if (!result) return;
+// 개선된 이미지 저장 함수 - 공유 버튼 아래쪽에 위치한 함수
+const saveResultImage = async (type) => {
+  if (!result) return;
 
-    // 저장 진행 중 표시
-    setIsSaving(true);
+  // 저장 진행 중 표시
+  setIsSaving(true);
 
-    try {
-      // html2canvas 동적 import
-      const html2canvasModule = await import("html2canvas");
-      const html2canvas = html2canvasModule.default;
+  try {
+    // html2canvas 동적 import
+    const html2canvasModule = await import("html2canvas");
+    const html2canvas = html2canvasModule.default;
 
-      // 저장 전 UI 요소 상태 저장
-      const saveOptions = document.getElementById("saveOptions");
-      const saveOptionsDisplayStyle = saveOptions
-        ? saveOptions.style.display
-        : "none";
+    // 저장 전 UI 요소 상태 저장
+    const saveOptions = document.getElementById("saveOptions");
+    const saveOptionsDisplayStyle = saveOptions
+      ? saveOptions.style.display
+      : "none";
 
-      // 저장 옵션 드롭다운 숨기기
-      if (saveOptions) {
-        saveOptions.style.display = "none";
-      }
+    // 저장 옵션 드롭다운 숨기기
+    if (saveOptions) {
+      saveOptions.style.display = "none";
+    }
 
-      // 사용자가 선택한 요소 (카드만 또는 전체 결과)
-      const targetElement =
-        type === "card" ? resultCardRef.current : fullResultRef.current;
+    // 사용자가 선택한 요소 (카드만 또는 전체 결과)
+    const targetElement =
+      type === "card" ? resultCardRef.current : fullResultRef.current;
 
-      if (!targetElement) {
-        throw new Error("대상 요소를 찾을 수 없습니다.");
-      }
+    if (!targetElement) {
+      throw new Error("대상 요소를 찾을 수 없습니다.");
+    }
 
-      // 캡처 설정 - 고품질 이미지를 위한 설정 개선
-      const options = {
-        backgroundColor: type === "card" ? null : "#ffffff",
-        scale: 3, // 더 높은 해상도 (2 → 3)
-        useCORS: true, // 외부 이미지 로드 허용
-        allowTaint: true,
-        logging: false,
-        removeContainer: false, // 임시 컨테이너 제거
-        imageTimeout: 15000, // 이미지 로드 타임아웃 증가
-        width: targetElement.offsetWidth,
-        height: targetElement.offsetHeight,
-      };
+    // 캡처 설정 - 고품질 이미지를 위한 설정 개선
+    const options = {
+      backgroundColor: type === "card" ? null : "#ffffff",
+      scale: 3, // 더 높은 해상도 (2 → 3)
+      useCORS: true, // 외부 이미지 로드 허용
+      allowTaint: true,
+      logging: false,
+      removeContainer: false, // 임시 컨테이너 제거
+      imageTimeout: 15000, // 이미지 로드 타임아웃 증가
+      width: targetElement.offsetWidth,
+      height: targetElement.offsetHeight,
+    };
 
-      // 결과 요소를 캡처
-      const canvas = await html2canvas(targetElement, options);
+    // 결과 요소를 캡처
+    const canvas = await html2canvas(targetElement, options);
 
-      // 이미지로 변환 (품질 개선)
-      const imgData = canvas.toDataURL("image/png", 1.0); // 최대 품질(1.0) 설정
+    // 이미지로 변환 (품질 개선)
+    const imgData = canvas.toDataURL("image/png", 1.0); // 최대 품질(1.0) 설정
 
-      // 이미지 다운로드 링크 생성
+    // 이미지 다운로드 링크 생성
+    const link = document.createElement("a");
+    link.href = imgData;
+    link.download = `정치성향테스트_${result.name}_${
+      type === "card" ? "카드" : "전체결과"
+    }.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // UI 원상복구
+    if (saveOptions) {
+      saveOptions.style.display = saveOptionsDisplayStyle;
+    }
+
+    alert("이미지가 저장되었습니다!");
+  } catch (error) {
+    console.error("이미지 생성 오류:", error);
+    alert("이미지 생성에 실패했습니다. 화면을 직접 캡처하여 저장해주세요.");
+  } finally {
+    setIsSaving(false);
+  }
+};
+
+// 카드만 전용으로 저장하는 함수 (캡처가 아닌 이미지 직접 다운로드)
+const saveCardImageDirectly = () => {
+  if (!result) return;
+  setIsSaving(true);
+
+  try {
+    // 카드 이미지 URL 가져오기
+    const cardUrl = `/images/${result.id}.png`;
+
+    // 이미지 로드
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = function () {
+      // 캔버스 생성
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      // 이미지 그리기
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+
+      // 캔버스를 이미지로 변환
+      const dataURL = canvas.toDataURL("image/png", 1.0);
+
+      // 이미지 다운로드
       const link = document.createElement("a");
-      link.href = imgData;
-      link.download = `정치성향테스트_${result.name}_${
-        type === "card" ? "카드" : "전체결과"
-      }.png`;
+      link.href = dataURL;
+      link.download = `정치성향테스트_${result.name}_카드.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
-      // UI 원상복구
-      if (saveOptions) {
-        saveOptions.style.display = saveOptionsDisplayStyle;
-      }
-
-      alert("이미지가 저장되었습니다!");
-    } catch (error) {
-      console.error("이미지 생성 오류:", error);
-      alert("이미지 생성에 실패했습니다. 화면을 직접 캡처하여 저장해주세요.");
-    } finally {
       setIsSaving(false);
-    }
-  };
+      alert("카드 이미지가 저장되었습니다!");
+    };
 
-  // 카드만 전용으로 저장하는 함수 (캡처가 아닌 이미지 직접 다운로드)
-  const saveCardImageDirectly = () => {
-    if (!result) return;
-    setIsSaving(true);
-
-    try {
-      // 카드 이미지 URL 가져오기
-      const cardUrl = `/images/${result.id}.png`;
-
-      // 이미지 로드
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = function () {
-        // 캔버스 생성
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-
-        // 이미지 그리기
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-
-        // 캔버스를 이미지로 변환
-        const dataURL = canvas.toDataURL("image/png", 1.0);
-
-        // 이미지 다운로드
-        const link = document.createElement("a");
-        link.href = dataURL;
-        link.download = `정치성향테스트_${result.name}_카드.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        setIsSaving(false);
-        alert("카드 이미지가 저장되었습니다!");
-      };
-
-      img.onerror = function () {
-        console.error("이미지 로드 실패:", cardUrl);
-        alert("카드 이미지를 저장할 수 없습니다. 화면을 직접 캡처해 주세요.");
-        setIsSaving(false);
-      };
-
-      img.src = cardUrl;
-    } catch (error) {
-      console.error("이미지 저장 오류:", error);
-      alert("이미지 저장에 실패했습니다.");
+    img.onerror = function () {
+      console.error("이미지 로드 실패:", cardUrl);
+      alert("카드 이미지를 저장할 수 없습니다. 화면을 직접 캡처해 주세요.");
       setIsSaving(false);
-    }
-  };
+    };
+
+    img.src = cardUrl;
+  } catch (error) {
+    console.error("이미지 저장 오류:", error);
+    alert("이미지 저장에 실패했습니다.");
+    setIsSaving(false);
+  }
+};
 
 // 메타 태그를 위한 데이터 준비
 const metaTagData = result ? {
@@ -756,8 +756,9 @@ data-ad-height = "100"></ins>
             </div>
           </div>
 
-          {/* 버튼 영역 - 순서 변경 */}
-          <div className="mt-4 flex space-x-2 justify-center">
+          
+// 버튼 영역 - 문제가 있는 부분
+<div className="mt-4 flex space-x-2 justify-center">
   <button
     className="py-2 px-4 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm forest-button"
     onClick={shareToKakao}
@@ -794,26 +795,112 @@ data-ad-height = "100"></ins>
         />
       </svg>
     </button>
-              <div
-                id="saveOptions"
-                className="hidden absolute z-10 mt-1 bg-white rounded-md shadow-lg w-full"
-              >
-                <div className="py-1">
-                  <button
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => saveCardImageDirectly()}
-                  >
-                    카드만 저장
-                  </button>
-                  <button
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => saveResultImage("full")}
-                  >
-                    전체 결과 저장
-                  </button>
-                </div>
-              </div>
-            </div>
+    <div
+      id="saveOptions"
+      className="hidden absolute z-10 mt-1 bg-white rounded-md shadow-lg w-full"
+    >
+      <div className="py-1">
+        <button
+          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          onClick={() => saveCardImageDirectly()}
+        >
+          카드만 저장
+        </button>
+        <button
+          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          onClick={() => saveResultImage("full")}
+        >
+          전체 결과 저장
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <button
+    className="py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm forest-button"
+    onClick={copyToClipboard}
+    disabled={isSaving}
+  >
+    {copied ? "✓ 복사됨" : "URL 복사"}
+  </button>
+</div>
+
+// 수정된 버튼 영역 (이렇게 수정해야 함)
+<div className="mt-4 flex space-x-2 justify-center">
+  {/* 카카오톡 공유 버튼 */}
+  <button
+    className="py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm forest-button flex items-center"
+    onClick={shareToKakao}
+    disabled={isSaving}
+  >
+    <img 
+      src="/images/kakao-icon.png" 
+      alt="카카오" 
+      className="w-4 h-4 mr-1" 
+      onError={(e) => {e.target.style.display = 'none'}}
+    />
+    카카오톡 공유
+  </button>
+
+  {/* URL 복사 버튼 */}
+  <button
+    className="py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm forest-button"
+    onClick={copyToClipboard}
+    disabled={isSaving}
+  >
+    {copied ? "✓ 복사됨" : "URL 복사"}
+  </button>
+
+  {/* 이미지 저장 버튼 */}
+  <div className="relative inline-block">
+    <button
+      id="saveButton"
+      className="py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm forest-button flex items-center"
+      onClick={(e) => {
+        e.stopPropagation();
+        const saveOptions = document.getElementById("saveOptions");
+        if (saveOptions) {
+          saveOptions.classList.toggle("hidden");
+        }
+      }}
+      disabled={isSaving}
+    >
+      {isSaving ? "저장 중..." : "이미지 저장"}
+      <svg
+        className="w-4 h-4 ml-1"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M19 9l-7 7-7-7"
+        />
+      </svg>
+    </button>
+    <div
+      id="saveOptions"
+      className="hidden absolute z-10 mt-1 bg-white rounded-md shadow-lg w-full"
+    >
+      <div className="py-1">
+        <button
+          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          onClick={() => saveCardImageDirectly()}
+        >
+          카드만 저장
+        </button>
+        <button
+          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          onClick={() => saveResultImage("full")}
+        >
+          전체 결과 저장
+        </button>
+      </div>
+    </div>
+  </div>
+
 
   <button
     className="py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm forest-button"
@@ -928,11 +1015,13 @@ data-ad-height = "100"></ins>
       <CompatibilitySection currentResult={result} allResults={results} />
 
       {/* 다른 결과 유형 갤러리 유지 */}
+      <ResultGallery allResults={results} currentResult={result} />
+      {/* 갤러리 컴포넌트에 onSelectResult 전달 */}
       <ResultGallery 
-  allResults={results} 
-  currentResult={result} 
-  onSelectResult={handleSelectResult}
-/>
+        allResults={results} 
+        currentResult={result} 
+        onSelectResult={handleSelectResult}
+      />
       
       {/* 하단 다시 테스트하기 버튼 - 크고 눈에 띄게 */}
 <div className="mt-8 text-center">
