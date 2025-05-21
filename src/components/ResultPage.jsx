@@ -3,6 +3,7 @@
 import { useTest } from "../contexts/TestContext";
 import { useEffect, useRef, useState } from "react";
 import results from "../data/results";
+import MetaTags from "./MetaTags";
 
 // 벡터 온도계 컴포넌트
 const VectorThermometer = ({ label, value, description }) => {
@@ -453,51 +454,69 @@ function ResultPage() {
     // setSelectedVectors(selectedResult.vectors);
   };
 
-  // 카카오톡 공유 함수 추가
-  const shareToKakao = () => {
-    if (window.Kakao && window.Kakao.Share) {
-      try {
-        // 결과 ID를 URL에 추가한 공유 링크 생성
-        const shareUrl = `${window.location.origin}?result=${result.id}`;
-
-        window.Kakao.Share.sendDefault({
-          objectType: "feed",
-          content: {
-            title: `나의 정치성향 동물은 ${result.name}(${result.animal})입니다!`,
-            description: "어느 당도 아닌 동물입니다만? - 정치성향테스트",
-            imageUrl: `${window.location.origin}/images/${result.id}.png`,
+  // 카카오톡 공유 함수 개선 버전
+const shareToKakao = () => {
+  if (window.Kakao && window.Kakao.Share) {
+    try {
+      // 결과 ID를 URL에 추가한 공유 링크 생성
+      const shareUrl = `${window.location.origin}?result=${result.id}`;
+      
+      // 이미지 URL 생성 - 절대 경로로 변환
+      const imageUrl = `${window.location.origin}/images/${result.id}.png`;
+      
+      // 정치 성향 설명 추출
+      const descriptionText = `${politicalOrientation}\n${result.quote}`;
+      
+      window.Kakao.Share.sendDefault({
+        objectType: "feed",
+        content: {
+          title: `나의 정치성향 동물은 ${result.name}(${result.animal})입니다!`,
+          description: "어느 당도 아닌 동물입니다만? - 정치성향테스트",
+          imageUrl: imageUrl,
+          imageWidth: 800,  // 이미지 크기 지정 (카카오 권장 사이즈)
+          imageHeight: 400, // 이미지 크기 지정 (카카오 권장 사이즈)
+          link: {
+            mobileWebUrl: shareUrl,
+            webUrl: shareUrl,
+          },
+        },
+        social: {
+          likeCount: Math.floor(Math.random() * 500) + 500, // 랜덤 좋아요 수 (500-1000)
+          commentCount: Math.floor(Math.random() * 200) + 50, // 랜덤 댓글 수 (50-250)
+          sharedCount: Math.floor(Math.random() * 300) + 100, // 랜덤 공유 수 (100-400)
+        },
+        buttons: [
+          {
+            title: "결과 확인하기",
             link: {
               mobileWebUrl: shareUrl,
               webUrl: shareUrl,
             },
           },
-          buttons: [
-            {
-              title: "결과 확인하기",
-              link: {
-                mobileWebUrl: shareUrl,
-                webUrl: shareUrl,
-              },
+          {
+            title: "테스트 해보기",
+            link: {
+              mobileWebUrl: window.location.origin,
+              webUrl: window.location.origin,
             },
-            {
-              title: "테스트 해보기",
-              link: {
-                mobileWebUrl: window.location.origin,
-                webUrl: window.location.origin,
-              },
-            },
-          ],
-        });
-      } catch (error) {
-        console.error("카카오 공유 오류:", error);
-        alert("카카오 공유에 문제가 발생했습니다. 다른 방법으로 공유해주세요.");
-      }
-    } else {
-      alert(
-        "카카오톡 SDK를 불러오는데 실패했습니다. 다른 방법으로 공유해주세요."
-      );
+          },
+        ],
+      });
+    } catch (error) {
+      console.error("카카오 공유 오류:", error);
+      alert("카카오 공유에 문제가 발생했습니다. 다른 방법으로 공유해주세요.");
     }
-  };
+  } else {
+    // Kakao SDK 초기화 시도
+    if (typeof window.initKakao === 'function') {
+      window.initKakao();
+      // 초기화 후 재시도
+      setTimeout(() => shareToKakao(), 300);
+    } else {
+      alert("카카오톡 SDK를 불러오는데 실패했습니다. 다른 방법으로 공유해주세요.");
+    }
+  }
+};
 
   // 개선된 이미지 저장 함수
   const saveResultImage = async (type) => {
@@ -624,11 +643,31 @@ function ResultPage() {
     }
   };
 
+// 메타 태그를 위한 데이터 준비
+const metaTagData = result ? {
+  title: `나의 정치성향 동물은 ${result.name}(${result.animal})입니다! - 애니폴리 테스트`,
+  description: `${result.quote} ${politicalOrientation}`,
+  image: `/images/${result.id}.png`,
+  url: `${window.location.origin}?result=${result.id}`
+} : null;
+
+// 함수 맨 위 return 문 바로 윗줄에 추가
+if (!result) {
+  return (
+    <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center animate-pulse">
+      <div className="w-12 h-12 rounded-full bg-blue-200 mx-auto mb-4"></div>
+      <div className="h-6 bg-gray-200 rounded mb-4 w-3/4 mx-auto"></div>
+      <div className="h-4 bg-gray-200 rounded mb-6 w-1/2 mx-auto"></div>
+      <div className="h-40 bg-gray-100 rounded-lg mb-4"></div>
+      <p className="text-gray-500">결과를 계산 중입니다...</p>
+    </div>
+  );
+}
+
 return (
-    <div
-      className="bg-white p-6 rounded-xl shadow-lg max-w-3xl w-full forest-card animate-fade-in"
-      ref={fullResultRef}
-    >
+  <div className="bg-white p-6 rounded-xl shadow-lg max-w-3xl w-full forest-card animate-fade-in" ref={fullResultRef}>
+    
+      {metaTagData && <MetaTags {...metaTagData} />}
       {/* 카카오 광고 영역 - 결과 카드 상단에 추가 */}
       <div className="mb-6 text-center">
         <div dangerouslySetInnerHTML={{
