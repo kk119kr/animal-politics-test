@@ -1,8 +1,9 @@
-// src/App.jsx 파일 수정
+// src/App.jsx - Footer 컴포넌트 통합
 import { TestProvider, useTest } from "./contexts/TestContext";
 import StartPage from "./components/StartPage";
 import QuestionPage from "./components/QuestionPage";
 import ResultPage from "./components/ResultPage";
+import Footer from "./components/Footer";  // Footer 컴포넌트 import 추가
 import { useState, useEffect } from "react";
 
 // 실제 앱 컴포넌트
@@ -41,13 +42,8 @@ const AppContent = () => {
         </div>
       </div>
 
-      {/* 푸터 - fixed 대신 static 위치로 변경 */}
-      <div className="w-full py-3 bg-white bg-opacity-70 text-center text-gray-400 text-xs mt-auto">
-        © 2025 정치성향테스트 |
-        <br />
-        문의: robehk@naver.com | 모든 콘텐츠 및 이미지의 권리는 제작자에게
-        있습니다.
-      </div>
+      {/* Footer 컴포넌트 사용 */}
+      <Footer />
     </div>
   );
 };

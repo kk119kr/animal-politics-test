@@ -5,6 +5,9 @@ import { useEffect, useRef, useState } from "react";
 import results from "../data/results";
 import MetaTags from "./MetaTags";
 
+
+
+
 // 벡터 온도계 컴포넌트
 const VectorThermometer = ({ label, value, description }) => {
   const percent = (value + 100) / 2;
@@ -328,6 +331,15 @@ function ResultPage() {
   // 이전 선택한 결과의 벡터 저장
   const [selectedVectors, setSelectedVectors] = useState(userVectors);
   
+  // 탭 정의 - 이 부분이 누락되어 오류가 발생했습니다
+  const tabs = [
+    { id: "traits", label: "특성" },
+    { id: "media", label: "미디어" },
+    { id: "strengths", label: "장점" },
+    { id: "challenges", label: "도전점" },
+    { id: "party", label: "선호 정당" }
+  ];
+
   // 결과가 변경될 때 상태 업데이트
   useEffect(() => {
     if (initialResult && !result) {
@@ -471,7 +483,7 @@ const shareToKakao = () => {
         objectType: "feed",
         content: {
           title: `나의 정치성향 동물은 ${result.name}(${result.animal})입니다!`,
-          description: "어느 당도 아닌 동물입니다만? - 정치성향테스트",
+          description: "당이 아니라 동물입니다만? - 정치성향테스트",
           imageUrl: imageUrl,
           imageWidth: 800,  // 이미지 크기 지정 (카카오 권장 사이즈)
           imageHeight: 400, // 이미지 크기 지정 (카카오 권장 사이즈)
@@ -739,7 +751,7 @@ data-ad-height = "100"></ins>
                   나의 정치성향 동물은 {result.name}({result.animal})입니다!
                 </p>
                 <p className="text-xs text-gray-500">
-                  어느 당도 아닌 동물입니다만? - 정치성향테스트
+                  당이 아니라 동물입니다만? - 정치성향테스트
                 </p>
               </div>
             </div>

@@ -60,16 +60,16 @@ const MetaTags = ({ title, description, image, url }) => {
     
     // 원본 메타 태그로 복원하는 cleanup 함수
     return () => {
-      document.title = "어느 당도 아닌 동물입니다만?";
+      document.title = "당이 아니라 동물입니다만?";
       
       // 메타 태그 초기값으로 복원 (필요시)
       setMetaTag('name', 'description', "숲속 동물 캐릭터로 알아보는 재미있는 정치성향 테스트. 15개의 질문으로 당신의 정치 성향을 확인해보세요!");
-      setMetaTag('property', 'og:title', "어느 당도 아닌 동물입니다만? - 정치성향테스트");
+      setMetaTag('property', 'og:title', "당이 아니라 동물입니다만? - 정치성향테스트");
       setMetaTag('property', 'og:description', "숲속 동물 캐릭터로 알아보는 나의 정치 성향은?");
       setMetaTag('property', 'og:image', `${baseUrl}/images/main.png`);
       setMetaTag('property', 'og:url', baseUrl);
       
-      setMetaTag('name', 'twitter:title', "어느 당도 아닌 동물입니다만? - 정치성향테스트");
+      setMetaTag('name', 'twitter:title', "당이 아니라 동물입니다만? - 정치성향테스트");
       setMetaTag('name', 'twitter:description', "숲속 동물 캐릭터로 알아보는 나의 정치 성향은?");
       setMetaTag('name', 'twitter:image', `${baseUrl}/images/main.png`);
       setMetaTag('name', 'twitter:url', baseUrl);
