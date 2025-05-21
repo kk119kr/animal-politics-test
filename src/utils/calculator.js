@@ -1,5 +1,5 @@
 // src/utils/calculator.js
-// 테스트 결과 계산 알고리즘 - 한국 사용자 패턴에 맞게 조정
+// 테스트 결과 계산 알고리즘 - 5점 척도로 수정
 
 /**
  * 사용자 응답을 벡터로 변환하는 함수
@@ -50,9 +50,9 @@ export const calculateVectors = (answers, questions) => {
  * @returns {Object} - 정규화된 벡터값
  */
 export const normalizeVectors = (vectors) => {
-  // 최대 가능 점수 (한국 응답 패턴 고려 조정)
-  // 대한민국 사용자들의 중간 선택지 선호 경향 반영
-  const maxPossibleScore = 180; // 약간 하향 조정
+  // 최대 가능 점수 (5점 척도 고려 조정)
+  // 최대 절대값이 30인 벡터값에 15개 질문을 고려
+  const maxPossibleScore = 250; 
   
   const normalized = {};
   
@@ -150,8 +150,38 @@ export const calculateMagnitudeSimilarity = (v1, v2) => {
 };
 
 /**
+ * 중도 선택지 비율 계산 함수 (5점 척도용 신규 함수)
+ * @param {Array} answers - 사용자 응답 배열
+ * @returns {number} - 중도 선택지(C) 선택 비율 (0 ~ 1)
+ */
+export const calculateCenteringRatio = (answers) => {
+  if (!answers || answers.length === 0) return 0;
+  
+  // 중도 선택지(C) 횟수 카운트
+  const centerCount = answers.filter(a => a === 'C').length;
+  
+  // 비율 계산
+  return centerCount / answers.length;
+};
+
+/**
+ * 극단 선택지 비율 계산 함수 (5점 척도용 신규 함수)
+ * @param {Array} answers - 사용자 응답 배열
+ * @returns {number} - 극단 선택지(A, E) 선택 비율 (0 ~ 1)
+ */
+export const calculateExtremeRatio = (answers) => {
+  if (!answers || answers.length === 0) return 0;
+  
+  // 극단 선택지(A, E) 횟수 카운트
+  const extremeCount = answers.filter(a => a === 'A' || a === 'E').length;
+  
+  // 비율 계산
+  return extremeCount / answers.length;
+};
+
+/**
  * 가중치를 적용한 최종 점수 계산 함수
- * 한국 사용자의 응답 패턴을 고려하여 조정
+ * 5점 척도 고려하여 조정
  * @param {Object} userVectors - 사용자 벡터
  * @param {Object} resultVectors - 결과 유형 벡터
  * @returns {number} - 가중치가 적용된 최종 점수
@@ -161,44 +191,52 @@ export const calculateWeightedScore = (userVectors, resultVectors) => {
   const cosineScore = (calculateCosineSimilarity(userVectors, resultVectors) + 1) / 2; // 0~1 범위로 변환
   const magnitudeScore = calculateMagnitudeSimilarity(userVectors, resultVectors);
   
-  // 가중치 조정 - 한국 사용자 응답 패턴 고려
-  // 방향성(코사인 유사도)의 중요도를 높이고 거리의 중요도는 약간 낮춤
-  return (distScore * 0.55) + (cosineScore * 0.40) + (magnitudeScore * 0.05);
+  // 가중치 조정 - 5점 척도 고려
+  // 코사인 유사도의 중요도를 약간 높임
+  return (distScore * 0.5) + (cosineScore * 0.45) + (magnitudeScore * 0.05);
 };
 
 /**
- * 한국 사용자 특성을 고려한 유형별 보정 함수 (변경됨)
- * 특정 유형이 과도하게 나오는 현상 방지
+ * 응답 패턴 기반 결과 유형별 보정 함수 (5점 척도 대응)
  * @param {Object} result - 결과 유형
- * @param {Object} vectors - 사용자 벡터
+ * @param {Array} answers - 사용자 응답
  * @returns {number} - 보정된 점수
  */
-export const applyKoreanUserAdjustment = (result, vectors) => {
-  // 변경된 보정값: 비버/청룡/여우원숭이 감소, 다른 유형들 증가
+export const applyResponsePatternAdjustment = (result, answers) => {
+  // 중도 선택(C) 비율 계산
+  const centeringRatio = calculateCenteringRatio(answers);
+  
+  // 극단 선택(A, E) 비율 계산
+  const extremeRatio = calculateExtremeRatio(answers);
+  
+  // 결과 유형별 보정 계수
   const adjustmentFactors = {
-    "R9": 0.8,   // 비버(공동체 건설자) 점수를 20% 감소 (기존에 없던 보정)
-    "R5": 0.9,   // 청룡(정의 수호자) 점수를 10% 감소 (기존 1.1에서 변경)
-    "R7": 0.85,  // 여우원숭이(균형 조율자) 점수를 15% 감소 (기존 0.92에서 더 감소)
+    // 중도적 결과 유형 - 중도 선택이 많을수록 강화
+    "R7": 1 + (centeringRatio * 0.3),  // 균형 조율자
+    "R8": 1 + (centeringRatio * 0.25), // 지식 탐구자
     
-    // 다른 유형들은 점수 증가
-    "R1": 1.1,   // 황금독수리(원칙 수호자) 점수 10% 증가
-    "R4": 1.15,  // 불사조(열정 혁신가) 점수 15% 증가
-    "R6": 1.2,   // 페가수스(자유 추구자) 점수 20% 증가
-    "R3": 1.15,  // 천년거북(전통 수호자) 점수 15% 증가
-    "R8": 1.12,  // 올빼미(지식 탐구자) 점수 12% 증가
-    "R10": 1.05, // 카멜레온(유연한 혁신가) 점수 5% 증가 (기존 0.9에서 변경)
-    "R2": 1.1    // 은여우(시장 신봉자) 점수 10% 증가 (기존 1.08에서 약간 증가)
+    // 극단적 결과 유형 - 극단 선택이 많을수록 강화
+    "R4": 1 + (extremeRatio * 0.25),  // 불사조(열정 혁신가)
+    "R1": 1 + (extremeRatio * 0.2),   // 황금독수리(원칙 수호자)
+    
+    // 희귀 유형 - 기본 가중치 적용
+    "R6": 1.1,   // 페가수스(자유 추구자)
+    "R3": 1.05,  // 천년거북(전통 수호자)
+    "R10": 1.05, // 카멜레온(유연한 혁신가)
+    
+    // 기타 유형
+    "R5": 1.02,  // 청룡(정의 수호자)
+    "R9": 0.95,  // 비버(공동체 건설자)
+    "R2": 1.05   // 은여우(시장 신봉자)
   };
   
   // 기본값은 1 (보정 없음)
-  const factor = adjustmentFactors[result.id] || 1;
-  
-  return factor;
+  return adjustmentFactors[result.id] || 1;
 };
 
 /**
  * 사용자 응답을 바탕으로 결과 유형 매칭
- * 한국 사용자 패턴을 고려하여 조정됨
+ * 5점 척도로 수정됨
  * @param {Array} answers - 사용자 응답 배열
  * @param {Array} questions - 질문 데이터
  * @param {Array} results - 결과 유형 데이터
@@ -209,58 +247,77 @@ export const calculateResult = (answers, questions, results) => {
   const rawVectors = calculateVectors(answers, questions);
   const normalizedVectors = normalizeVectors(rawVectors);
   
-  // 각 결과 유형에 대한 점수 계산 (한국 사용자 보정 적용)
+  // 각 결과 유형에 대한 점수 계산 (5점 척도 보정 적용)
   const resultScores = results.map(result => {
     const rawScore = calculateWeightedScore(normalizedVectors, result.vectors);
-    const koreanAdjustment = applyKoreanUserAdjustment(result, normalizedVectors);
+    const patternAdjustment = applyResponsePatternAdjustment(result, answers);
     
     return {
       result,
-      score: rawScore * koreanAdjustment
+      score: rawScore * patternAdjustment
     };
   });
   
   // 점수 기준 내림차순 정렬
   resultScores.sort((a, b) => b.score - a.score);
   
-  // 희귀도에 따른 조건 조정 (한국 사용자 패턴 고려)
+  // 희귀도에 따른 조건 조정 (5점 척도 고려)
   
-  // UR은 75% 이상의 유사도를 가져야 함 (기준 완화)
+  // UR은 70% 이상의 유사도를 가져야 함 (기준 완화)
   if (resultScores[0].result.rarity === 'UR' && 
-      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.75) {
+      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.7) {
     // UR 조건을 만족하지 못하면 다음 최고 점수로 대체
     return resultScores[1].result;
   }
   
-  // SR은 72% 이상의 유사도를 가져야 함 (기준 완화)
+  // SR은 67% 이상의 유사도를 가져야 함 (기준 완화)
   if (resultScores[0].result.rarity === 'SR' && 
-      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.72) {
+      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.67) {
     // SR 조건을 만족하지 못하면 다음 최고 점수로 대체
     return resultScores[1].result;
   }
   
-  // R은 65% 이상의 유사도를 가져야 함 (기준 완화)
+  // R은 63% 이상의 유사도를 가져야 함 (기준 완화)
   if (resultScores[0].result.rarity === 'R' && 
-      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.65) {
+      calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors) < 0.63) {
     // R 조건을 만족하지 못하면 다음 최고 점수로 대체
     return resultScores[1].result;
   }
   
-  // 카멜레온(R10)에 대한 추가 제한 조건 (변경됨)
+  // 카멜레온(R10)에 대한 추가 제한 조건 (수정됨)
   if (resultScores[0].result.id === 'R10') {
     const cosine = calculateCosineSimilarity(normalizedVectors, resultScores[0].result.vectors);
     
-    // 카멜레온의 경우 유사도 요구치 완화 (0.70 → 0.60)
-    if (cosine < 0.60) {
+    // 카멜레온의 경우 유사도 요구치 완화 (0.6 → 0.58)
+    if (cosine < 0.58) {
       return resultScores[1].result;
     }
     
-    // 중간 선택지 과다 선택 시 제한 완화 (7 → 10)
-    let bCount = 0;
-    answers.forEach(a => { if (a === 'B') bCount++; });
+    // 중간 선택지 과다 선택 시 제한 조정
+    let cCount = 0;
+    answers.forEach(a => { if (a === 'C') cCount++; });
     
-    if (bCount >= 10) {
+    // 중도 선택지(C) 8개 이상 선택 시 카멜레온 결과 제한
+    if (cCount >= 8) {
       return resultScores[1].result;
+    }
+  }
+  
+  // 결과 다양성 확보를 위한 최종 조정
+  // 비슷한 점수(차이가 3% 이내)의 희소 결과 우선
+  if (resultScores.length > 1) {
+    const topScore = resultScores[0].score;
+    const runnerUpScore = resultScores[1].score;
+    
+    // 점수 차이가 아주 작고(3% 이내), 차순위가 더 희귀한 경우
+    if ((topScore - runnerUpScore) / topScore < 0.03) {
+      const topRarity = getRarityValue(resultScores[0].result.rarity);
+      const runnerUpRarity = getRarityValue(resultScores[1].result.rarity);
+      
+      // 차순위가 더 희귀하면 차순위 결과 반환
+      if (runnerUpRarity > topRarity) {
+        return resultScores[1].result;
+      }
     }
   }
   
@@ -268,13 +325,26 @@ export const calculateResult = (answers, questions, results) => {
   return resultScores[0].result;
 };
 
+// 희귀도 값 변환 헬퍼 함수
+function getRarityValue(rarity) {
+  switch(rarity) {
+    case 'UR': return 4;
+    case 'SR': return 3;
+    case 'R': return 2;
+    case 'C': 
+    default: return 1;
+  }
+}
+
 export default {
   calculateVectors,
   normalizeVectors,
   calculateDistance,
   calculateCosineSimilarity,
   calculateMagnitudeSimilarity,
+  calculateCenteringRatio,
+  calculateExtremeRatio,
   calculateWeightedScore,
-  applyKoreanUserAdjustment,
+  applyResponsePatternAdjustment,
   calculateResult
 };

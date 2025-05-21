@@ -48,7 +48,7 @@ const QuestionPage = () => {
 
   // 선택지 개수에 따른 그리드 스타일 결정
   const getOptionsGridStyle = () => {
-    // 3개 이상의 선택지가 있는 경우 스택 형태로 표시
+    // 5개 선택지가 있으므로 스택 형태로 표시
     return "space-y-4";
   };
 
@@ -91,7 +91,7 @@ const QuestionPage = () => {
         </div>
       </div>
 
-      {/* 선택지 영역 - 더 유연한 레이아웃 */}
+      {/* 선택지 영역 - 5점 척도 */}
       <div className={getOptionsGridStyle()}>
         {question.options.map((option, index) => (
           <button
@@ -101,8 +101,8 @@ const QuestionPage = () => {
                 ? "bg-blue-100 border-blue-500 shadow-md"
                 : "bg-gray-50 border-gray-300 hover:border-blue-300 hover:bg-blue-50 hover:shadow-sm"
             } border-2 text-gray-800 py-4 px-4 rounded-lg text-left option-card ${
-              // 중간 선택지(B)에 대한 스타일 강조 (3개 선택지가 있는 경우에만)
-              question.options.length === 3 && option.id === "B"
+              // 중간 선택지(C)에 대한 스타일 강조
+              option.id === "C"
                 ? "border-dashed border-blue-300"
                 : ""
             }`}
@@ -114,12 +114,15 @@ const QuestionPage = () => {
                 className={`font-medium mr-3 ${
                   selectedOption === option.id
                     ? "text-blue-600"
-                    : "text-blue-500"
+                    : option.id === "A" || option.id === "E" 
+                      ? "text-purple-500" 
+                      : option.id === "C" 
+                        ? "text-green-500"
+                        : "text-blue-500"
                 }`}
               >
-                {option.id}
+                {option.text}
               </span>
-              <span className="text-gray-700">{option.text}</span>
             </div>
           </button>
         ))}
