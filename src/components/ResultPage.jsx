@@ -457,15 +457,16 @@ function ResultPage() {
     <div className="bg-white p-6 rounded-xl shadow-lg max-w-3xl w-full forest-card animate-fade-in" ref={fullResultRef}>
       <MetaTags {...metaTagData} />
       
-      {/* 카카오 광고 영역 - 오류 처리 추가 */}
-      <div className="mb-6">
-        <KakaoAd 
-          adUnit="DAN-b68sSnUxw2CfTs04"
-          width="320"
-          height="100"
-          className="mx-auto"
-        />
-      </div>
+    {/* 카카오 광고 영역 - 상단에 더 눈에 띄게 */}
+    <div className="mb-8 bg-yellow-50 p-4 rounded-lg">
+      <div className="text-center text-sm text-gray-600 mb-2">광고</div>
+      <KakaoAd 
+        adUnit="DAN-b68sSnUxw2CfTs04"
+        width="320"
+        height="100"
+        className="mx-auto"
+      />
+    </div>
       
       {/* 결과 헤더 */}
       <div className="text-center mb-6">
