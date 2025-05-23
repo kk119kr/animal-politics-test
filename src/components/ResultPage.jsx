@@ -683,7 +683,7 @@ return (
       <div className="mb-6 text-center">
         <div dangerouslySetInnerHTML={{
           __html: `
-            <ins class="kakao_ad_area" style="display:none;"
+            <ins class="kakao_ad_area" style="display: black;"
 data-ad-unit = "DAN-b68sSnUxw2CfTs04"
 data-ad-width = "320"
 data-ad-height = "100"></ins>
