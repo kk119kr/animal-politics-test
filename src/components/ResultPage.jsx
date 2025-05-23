@@ -758,7 +758,6 @@ data-ad-height = "100"></ins>
 
           
 
-// 수정된 버튼 영역 (이렇게 수정해야 함)
 <div className="mt-4 flex space-x-2 justify-center">
   {/* 카카오톡 공유 버튼 */}
   <button
