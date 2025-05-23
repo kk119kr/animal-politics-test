@@ -4,7 +4,7 @@ import { useTest } from "../contexts/TestContext";
 import { useEffect, useRef, useState } from "react";
 import results from "../data/results";
 import MetaTags from "./MetaTags";
-
+import KakaoAd from './KakaoAd'; // 새로운 컴포넌트 import
 
 
 
@@ -678,19 +678,17 @@ if (!result) {
 return (
   <div className="bg-white p-6 rounded-xl shadow-lg max-w-3xl w-full forest-card animate-fade-in" ref={fullResultRef}>
     
-      {metaTagData && <MetaTags {...metaTagData} />}
-      {/* 카카오 광고 영역 - 결과 카드 상단에 추가 */}
-      <div className="mb-6 text-center">
-        <div dangerouslySetInnerHTML={{
-          __html: `
-            <ins class="kakao_ad_area" style="display:none;"
-data-ad-unit = "DAN-b68sSnUxw2CfTs04"
-data-ad-width = "320"
-data-ad-height = "100"></ins>
-<script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-          `
-        }} />
-      </div>
+    {metaTagData && <MetaTags {...metaTagData} />}
+    
+    {/* 카카오 광고 영역 - 개선된 컴포넌트 사용 */}
+    <div className="mb-6">
+      <KakaoAd 
+        adUnit="DAN-b68sSnUxw2CfTs04"
+        width="320"
+        height="100"
+        className="mx-auto"
+      />
+    </div>
     
       {/* 결과 헤더 */}
       <div className="text-center mb-6">
