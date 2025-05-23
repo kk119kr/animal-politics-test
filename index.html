@@ -41,11 +41,29 @@
       crossorigin="anonymous"
     ></script>
 
-    <!-- 카카오애드핏 스크립트 (페이지 전체용) -->
+    <!-- 카카오 SDK 로드 (head에서 먼저 로드) -->
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    
+    <!-- 카카오애드핏 스크립트 -->
     <script 
       type="text/javascript" 
       src="//t1.daumcdn.net/kas/static/ba.min.js" 
       async>
+    </script>
+
+    <!-- 카카오 SDK 초기화 (즉시 실행) -->
+    <script>
+      // 페이지 로드 완료 후 카카오 SDK 초기화
+      window.addEventListener('load', function() {
+        if (window.Kakao && !window.Kakao.isInitialized()) {
+          try {
+            window.Kakao.init('79c34c7b328cdbd4b3565f3034a8d7b9');
+            console.log('Kakao SDK initialized in HTML');
+          } catch (error) {
+            console.error('Kakao SDK init error:', error);
+          }
+        }
+      });
     </script>
   </head>
   <body>
