@@ -1,4 +1,4 @@
-// src/components/KakaoAd.jsx - 수정된 안전한 버전
+// src/components/KakaoAd.jsx - 더 안전한 버전
 import { useEffect, useRef, useState } from 'react';
 
 const KakaoAd = ({ 
@@ -17,14 +17,24 @@ const KakaoAd = ({
     if (loadAttempted.current) return;
     loadAttempted.current = true;
 
+    // 오류 처리를 위한 try-catch 블록
     const loadAd = () => {
-      // 컴포넌트가 마운트된 상태인지 확인
-      if (!adRef.current) return;
-
       try {
+        // 컴포넌트가 마운트된 상태인지 확인
+        if (!adRef.current) {
+          setHasError(true);
+          return;
+        }
+
         // 기존 광고 제거
         const existingAds = adRef.current.querySelectorAll('.kakao_ad_area');
-        existingAds.forEach(ad => ad.remove());
+        existingAds.forEach(ad => {
+          try {
+            ad.remove();
+          } catch (e) {
+            console.warn('광고 제거 중 오류:', e);
+          }
+        });
         
         // 새 광고 요소 생성
         const adElement = document.createElement('ins');
@@ -39,12 +49,18 @@ const KakaoAd = ({
         
         // 광고 로드 (window.adfit 확인)
         if (typeof window !== 'undefined' && window.adfit) {
-          (window.adfit = window.adfit || []).push(adElement);
-          setIsLoaded(true);
-          console.log('카카오 광고 로드 완료');
+          try {
+            (window.adfit = window.adfit || []).push(adElement);
+            setIsLoaded(true);
+            console.log('카카오 광고 로드 완료');
+          } catch (adFitError) {
+            console.error('adfit 푸시 오류:', adFitError);
+            setHasError(true);
+          }
         } else {
           console.warn('window.adfit이 준비되지 않음');
-          setHasError(true);
+          // adfit이 없어도 오류로 처리하지 않고 조용히 실패
+          setIsLoaded(true); // UI에서는 로드된 것처럼 처리
         }
       } catch (error) {
         console.error('카카오 광고 로드 실패:', error);
@@ -54,29 +70,39 @@ const KakaoAd = ({
 
     // 스크립트 로드 확인 및 광고 로드
     const checkAndLoadAd = () => {
-      const existingScript = document.querySelector('script[src*="kas/static/ba.min.js"]');
-      
-      if (existingScript) {
-        // 스크립트가 이미 있으면 약간의 지연 후 광고 로드
-        setTimeout(loadAd, 500);
-      } else {
-        // 스크립트 동적 로드
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = '//t1.daumcdn.net/kas/static/ba.min.js';
-        script.async = true;
+      try {
+        const existingScript = document.querySelector('script[src*="kas/static/ba.min.js"]');
         
-        script.onload = () => {
-          console.log('카카오 애드핏 스크립트 로드 완료');
-          setTimeout(loadAd, 100);
-        };
-        
-        script.onerror = () => {
-          console.error('카카오 애드핏 스크립트 로드 실패');
-          setHasError(true);
-        };
-        
-        document.head.appendChild(script);
+        if (existingScript) {
+          // 스크립트가 이미 있으면 약간의 지연 후 광고 로드
+          setTimeout(loadAd, 500);
+        } else {
+          // 스크립트 동적 로드
+          const script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = '//t1.daumcdn.net/kas/static/ba.min.js';
+          script.async = true;
+          
+          script.onload = () => {
+            console.log('카카오 애드핏 스크립트 로드 완료');
+            setTimeout(loadAd, 100);
+          };
+          
+          script.onerror = () => {
+            console.error('카카오 애드핏 스크립트 로드 실패');
+            setHasError(true);
+          };
+          
+          // 스크립트 추가 전에 head 요소 확인
+          if (document.head) {
+            document.head.appendChild(script);
+          } else {
+            setHasError(true);
+          }
+        }
+      } catch (error) {
+        console.error('스크립트 로드 체크 중 오류:', error);
+        setHasError(true);
       }
     };
 
@@ -97,9 +123,9 @@ const KakaoAd = ({
         });
       }
     };
-  }, []); // 의존성 배열을 빈 배열로 설정하여 한 번만 실행
+  }, []); // 빈 의존성 배열로 한 번만 실행
 
-  // 에러 상태일 때는 아무것도 렌더링하지 않음
+  // 에러 상태일 때는 아무것도 렌더링하지 않음 (조용한 실패)
   if (hasError) {
     return null;
   }
@@ -112,16 +138,15 @@ const KakaoAd = ({
         minHeight: `${height}px`, 
         width: `${width}px`, 
         margin: '0 auto',
-        backgroundColor: '#f9f9f9',
-        border: '1px solid #eee',
+        backgroundColor: 'transparent', // 배경을 투명으로 변경
         borderRadius: '4px'
       }}
     >
-      {/* 로딩 상태 표시 */}
-      {!isLoaded && (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-xs text-gray-400 py-4">
-            광고 로딩 중...
+      {/* 로딩 상태 표시 - 더 미니멀하게 */}
+      {!isLoaded && !hasError && (
+        <div className="flex items-center justify-center h-full opacity-50">
+          <div className="text-xs text-gray-400 py-2">
+            •••
           </div>
         </div>
       )}
@@ -129,4 +154,4 @@ const KakaoAd = ({
   );
 };
 
-export default KakaoAd;
+export default KakaoAd; 
