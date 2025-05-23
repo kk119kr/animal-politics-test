@@ -41,34 +41,15 @@
       crossorigin="anonymous"
     ></script>
 
+    <!-- 카카오애드핏 스크립트 (페이지 전체용) -->
     <script 
-  type="text/javascript" 
-  src="//t1.daumcdn.net/kas/static/ba.min.js" 
-  async>
-</script>
-
-<!-- 광고 영역 - 결과 페이지에 수동으로 추가 -->
-<div id="kakao-ad-container" style="text-align: center; margin: 10px 0;">
-  <ins class="kakao_ad_area" 
-       style="display:none;" 
-       data-ad-unit="DAN-b68sSnUxw2CfTs04" 
-       data-ad-width="320" 
-       data-ad-height="100">
-  </ins>
-</div>
-
-<script type="text/javascript">
-  // 페이지 로드 후 광고 초기화
-  window.addEventListener('load', function() {
-    setTimeout(function() {
-      if (window.adfit && typeof window.adfit.push === 'function') {
-        var adElements = document.querySelectorAll('.kakao_ad_area');
-        adElements.forEach(function(element) {
-          window.adfit.push(element);
-        });
-      }
-    }, 2000);
-  });
-</script>
+      type="text/javascript" 
+      src="//t1.daumcdn.net/kas/static/ba.min.js" 
+      async>
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
   </body>
-</html> 
+</html>
