@@ -692,6 +692,11 @@ data-ad-height = "100"></ins>
         }} />
       </div>
     
+<ins class="kakao_ad_area" style="display: none;"
+data-ad-unit = "DAN-b68sSnUxw2CfTs04"
+data-ad-width = "320"
+data-ad-height = "100"></ins>
+<script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
       {/* 결과 헤더 */}
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
