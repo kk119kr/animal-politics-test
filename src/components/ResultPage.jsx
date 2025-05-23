@@ -63,6 +63,8 @@ const ResultTabs = ({ activeTab, setActiveTab, tabs }) => {
   );
 };
 
+
+
 // 궁합 섹션 컴포넌트
 const CompatibilitySection = ({ currentResult, allResults }) => {
   const getCompatibilityInfo = (currentId) => {
