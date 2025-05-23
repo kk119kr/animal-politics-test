@@ -1,157 +1,23 @@
-// src/components/KakaoAd.jsx - 더 안전한 버전
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
-const KakaoAd = ({ 
-  adUnit = "DAN-b68sSnUxw2CfTs04", 
-  width = "320", 
-  height = "100",
-  className = "" 
-}) => {
+const KakaoAd = ({ adUnit, width = "320", height = "100" }) => {
   const adRef = useRef(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [hasError, setHasError] = useState(false);
-  const loadAttempted = useRef(false);
 
   useEffect(() => {
-    // 중복 로드 방지
-    if (loadAttempted.current) return;
-    loadAttempted.current = true;
+    if (adRef.current && window.adfit) {
+      const ins = document.createElement('ins');
+      ins.className = 'kakao_ad_area';
+      ins.style.display = 'none';
+      ins.setAttribute('data-ad-unit', adUnit);
+      ins.setAttribute('data-ad-width', width);
+      ins.setAttribute('data-ad-height', height);
+      
+      adRef.current.appendChild(ins);
+      (window.adfit = window.adfit || []).push(ins);
+    }
+  }, [adUnit, width, height]);
 
-    // 오류 처리를 위한 try-catch 블록
-    const loadAd = () => {
-      try {
-        // 컴포넌트가 마운트된 상태인지 확인
-        if (!adRef.current) {
-          setHasError(true);
-          return;
-        }
-
-        // 기존 광고 제거
-        const existingAds = adRef.current.querySelectorAll('.kakao_ad_area');
-        existingAds.forEach(ad => {
-          try {
-            ad.remove();
-          } catch (e) {
-            console.warn('광고 제거 중 오류:', e);
-          }
-        });
-        
-        // 새 광고 요소 생성
-        const adElement = document.createElement('ins');
-        adElement.className = 'kakao_ad_area';
-        adElement.style.display = 'block';
-        adElement.setAttribute('data-ad-unit', adUnit);
-        adElement.setAttribute('data-ad-width', width);
-        adElement.setAttribute('data-ad-height', height);
-        
-        // 광고 컨테이너에 추가
-        adRef.current.appendChild(adElement);
-        
-        // 광고 로드 (window.adfit 확인)
-        if (typeof window !== 'undefined' && window.adfit) {
-          try {
-            (window.adfit = window.adfit || []).push(adElement);
-            setIsLoaded(true);
-            console.log('카카오 광고 로드 완료');
-          } catch (adFitError) {
-            console.error('adfit 푸시 오류:', adFitError);
-            setHasError(true);
-          }
-        } else {
-          console.warn('window.adfit이 준비되지 않음');
-          // adfit이 없어도 오류로 처리하지 않고 조용히 실패
-          setIsLoaded(true); // UI에서는 로드된 것처럼 처리
-        }
-      } catch (error) {
-        console.error('카카오 광고 로드 실패:', error);
-        setHasError(true);
-      }
-    };
-
-    // 스크립트 로드 확인 및 광고 로드
-    const checkAndLoadAd = () => {
-      try {
-        const existingScript = document.querySelector('script[src*="kas/static/ba.min.js"]');
-        
-        if (existingScript) {
-          // 스크립트가 이미 있으면 약간의 지연 후 광고 로드
-          setTimeout(loadAd, 500);
-        } else {
-          // 스크립트 동적 로드
-          const script = document.createElement('script');
-          script.type = 'text/javascript';
-          script.src = '//t1.daumcdn.net/kas/static/ba.min.js';
-          script.async = true;
-          
-          script.onload = () => {
-            console.log('카카오 애드핏 스크립트 로드 완료');
-            setTimeout(loadAd, 100);
-          };
-          
-          script.onerror = () => {
-            console.error('카카오 애드핏 스크립트 로드 실패');
-            setHasError(true);
-          };
-          
-          // 스크립트 추가 전에 head 요소 확인
-          if (document.head) {
-            document.head.appendChild(script);
-          } else {
-            setHasError(true);
-          }
-        }
-      } catch (error) {
-        console.error('스크립트 로드 체크 중 오류:', error);
-        setHasError(true);
-      }
-    };
-
-    // DOM이 준비된 후 실행
-    const timer = setTimeout(checkAndLoadAd, 100);
-
-    // 정리 함수
-    return () => {
-      clearTimeout(timer);
-      if (adRef.current) {
-        const ads = adRef.current.querySelectorAll('.kakao_ad_area');
-        ads.forEach(ad => {
-          try {
-            ad.remove();
-          } catch (e) {
-            console.warn('광고 제거 중 오류:', e);
-          }
-        });
-      }
-    };
-  }, []); // 빈 의존성 배열로 한 번만 실행
-
-  // 에러 상태일 때는 아무것도 렌더링하지 않음 (조용한 실패)
-  if (hasError) {
-    return null;
-  }
-
-  return (
-    <div 
-      ref={adRef} 
-      className={`kakao-ad-container text-center ${className}`}
-      style={{ 
-        minHeight: `${height}px`, 
-        width: `${width}px`, 
-        margin: '0 auto',
-        backgroundColor: 'transparent', // 배경을 투명으로 변경
-        borderRadius: '4px'
-      }}
-    >
-      {/* 로딩 상태 표시 - 더 미니멀하게 */}
-      {!isLoaded && !hasError && (
-        <div className="flex items-center justify-center h-full opacity-50">
-          <div className="text-xs text-gray-400 py-2">
-            •••
-          </div>
-        </div>
-      )}
-    </div>
-  );
+  return <div ref={adRef}></div>;
 };
 
-export default KakaoAd; 
+export default KakaoAd;
