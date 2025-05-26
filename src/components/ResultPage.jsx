@@ -450,7 +450,7 @@ function ResultPage() {
   // 메타 태그 데이터
   const metaTagData = {
     title: `나의 정치성향 동물은 ${result.name}(${result.animal})입니다! - 애니폴리 테스트`,
-    description: `${result.quote} ${politicalOrientation}`,
+    description: `${politicalOrientation}`,
     image: `/images/${result.id}.png`,
     url: `${window.location.origin}?result=${result.id}`
   };
@@ -459,33 +459,30 @@ function ResultPage() {
     <div className="bg-white p-6 rounded-xl shadow-lg max-w-3xl w-full forest-card animate-fade-in" ref={fullResultRef}>
       <MetaTags {...metaTagData} />
       
-    {/* 카카오 광고 영역 - 상단에 더 눈에 띄게 */}
-    <div className="mb-8 bg-yellow-50 p-4 rounded-lg">
-      <div className="text-center text-sm text-gray-600 mb-2">광고</div>
-      <KakaoAd 
-        adUnit="DAN-b68sSnUxw2CfTs04"
-        width="320"
-        height="100"
-        className="mx-auto"
-      />
-    </div>
-      
       {/* 결과 헤더 */}
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">
-          당신이 뽑은 애니폴리는 '{result.name}'입니다!
-        </h1>
-        <p className="text-lg mt-2 text-gray-700">
-          당신의 정치적 성향은 <span className="font-semibold">{politicalOrientation}</span>에 가깝습니다.
-        </p>
-        <div className="italic text-gray-500 mt-1 text-sm">"{result.quote}"</div>
+        {/* 메인 타이틀 - 그라데이션 배경과 카드 스타일 */}
+        <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 rounded-xl p-6 mb-4 border border-blue-100">
+          <h1 className="text-2xl font-bold text-gray-800 mb-3">
+            당신이 뽑은 애니폴리는 <span className="text-blue-600">'{result.name}'</span>입니다!
+          </h1>
+          <div className="bg-white bg-opacity-70 rounded-lg p-4 inline-block">
+            <p className="text-lg text-gray-700">
+              당신의 정치적 성향은{' '}
+              <span className="font-bold text-purple-600 bg-purple-100 px-2 py-1 rounded-full text-sm">
+                {politicalOrientation}
+              </span>
+              에 가깝습니다.
+            </p>
+          </div>
+        </div>
         
         {result !== initialResult && (
-          <div className="mt-3 bg-yellow-100 px-3 py-2 rounded-lg text-sm text-yellow-700 inline-block">
-            다른 유형 탐색 중 - 
+          <div className="mt-3 bg-yellow-100 px-4 py-3 rounded-lg text-sm text-yellow-700 inline-block border border-yellow-200">
+            <span className="font-medium">다른 유형 탐색 중</span> - 
             <button 
               onClick={() => setResult(initialResult)}
-              className="ml-1 underline font-medium hover:text-yellow-800"
+              className="ml-1 underline font-medium hover:text-yellow-800 transition-colors"
             >
               내 결과로 돌아가기
             </button>
@@ -568,6 +565,19 @@ function ResultPage() {
                 value={selectedVectors.engagement}
                 description="적극적으로 문제에 대응하는 정도"
               />
+              
+              {/* 카카오 광고 - 벡터 그래프 하단에 배치 */}
+              <div className="mt-6 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
+                <div className="text-center text-xs text-gray-500 mb-2">광고</div>
+                <div className="flex justify-center">
+                  <KakaoAd 
+                    adUnit="DAN-b68sSnUxw2CfTs04"
+                    width="320"
+                    height="100"
+                    className="mx-auto"
+                  />
+                </div>
+              </div>
             </div>
           )}
 
