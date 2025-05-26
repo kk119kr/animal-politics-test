@@ -566,7 +566,6 @@ function ResultPage() {
                 description="적극적으로 문제에 대응하는 정도"
               />
               
-// 벡터 온도계 하단에 광고 배치
 <div className="mt-6 text-center">
   <div className="text-xs text-gray-500 mb-2">광고</div>
   <ins 
