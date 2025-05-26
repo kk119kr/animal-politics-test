@@ -4,7 +4,7 @@ import { useTest } from "../contexts/TestContext";
 import { useEffect, useRef, useState } from "react";
 import results from "../data/results";
 import MetaTags from "./MetaTags";
-import KakaoAd from "./KakaoAd"; // KakaoAd 컴포넌트 import 추가
+
 
 // 벡터 온도계 컴포넌트
 const VectorThermometer = ({ label, value, description }) => {
@@ -567,17 +567,24 @@ function ResultPage() {
               />
               
               {/* 카카오 광고 - 벡터 그래프 하단에 배치 */}
-              <div className="mt-6 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
-                <div className="text-center text-xs text-gray-500 mb-2">광고</div>
-                <div className="flex justify-center">
-                  <KakaoAd 
-                    adUnit="DAN-b68sSnUxw2CfTs04"
-                    width="320"
-                    height="100"
-                    className="mx-auto"
-                  />
-                </div>
-              </div>
+<div className="mt-6 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
+  <div className="text-center text-xs text-gray-500 mb-2">광고</div>
+  <div className="flex justify-center">
+    {/* 카카오애드핏에서 제공받은 광고 스크립트를 여기에 직접 붙여넣기 */}
+    <ins 
+      className="kakao_ad_area" 
+      style={{display: "none"}}
+      data-ad-unit="DAN-b68sSnUxw2CfTs04" 
+      data-ad-width="320" 
+      data-ad-height="100"
+    ></ins>
+    <script 
+      type="text/javascript" 
+      src="//t1.daumcdn.net/kas/static/ba.min.js" 
+      async
+    ></script>
+  </div>
+</div>
             </div>
           )}
 
