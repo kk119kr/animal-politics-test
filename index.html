@@ -44,12 +44,6 @@
     <!-- 카카오 SDK 로드 (head에서 먼저 로드) -->
     <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
     
-    <!-- 카카오애드핏 스크립트 -->
-    <script 
-      type="text/javascript" 
-      src="//t1.daumcdn.net/kas/static/ba.min.js" 
-      async>
-    </script>
 
     <!-- 카카오 SDK 초기화 (즉시 실행) -->
     <script>
@@ -69,5 +63,7 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-  </body>
+    <!-- 카카오애드핏 스크립트를 여기로 이동 -->
+  <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+</body>
 </html>

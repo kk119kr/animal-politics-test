@@ -566,7 +566,7 @@ function ResultPage() {
                 description="적극적으로 문제에 대응하는 정도"
               />
               
-              {/* 카카오 광고 - 벡터 그래프 하단에 배치 */}
+// 벡터 온도계 하단에 광고 배치
 <div className="mt-6 text-center">
   <div className="text-xs text-gray-500 mb-2">광고</div>
   <ins 
@@ -575,7 +575,7 @@ function ResultPage() {
     data-ad-unit="DAN-b68sSnUxw2CfTs04" 
     data-ad-width="320" 
     data-ad-height="100"
-  ></ins>
+  />
 </div>
             </div>
           )}
