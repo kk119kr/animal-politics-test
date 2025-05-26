@@ -72,7 +72,7 @@ const QuestionPage = () => {
 
       {/* 질문 영역 */}
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-6 leading-relaxed">
+        <h2 className="text-xl font-normal text-gray-800 mb-6 leading-relaxed whitespace-pre-line text-center">
           {question.question}
         </h2>
 
