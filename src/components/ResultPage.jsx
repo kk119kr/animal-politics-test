@@ -17,6 +17,17 @@ const VectorThermometer = ({ label, value, description }) => {
 
   const [width, setWidth] = useState(0);
 
+
+  // ResultPage.jsx 맨 위에 추가
+useEffect(() => {
+  if (!window.adfit) {
+    const script = document.createElement('script');
+    script.src = 'https://t1.daumcdn.net/kas/static/ba.min.js';
+    script.async = true;
+    document.head.appendChild(script);
+  }
+}, []);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setWidth(percent);
